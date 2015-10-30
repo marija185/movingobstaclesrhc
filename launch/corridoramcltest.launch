@@ -5,11 +5,11 @@
 
 
 
-<node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage3)/corridor.yaml" respawn="false" >
+<node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage)/corridor.yaml" respawn="false" >
 <param name="frame_id" value="/map" />
 </node>
 
-<node pkg="stage_ros" type="stageros" name="stageros" args="$(find mapsforsimulatorstage3)/corridoramcl.world" respawn="false" >
+<node pkg="stage_ros" type="stageros" name="stageros" args="$(find mapsforsimulatorstage)/corridoramcl.world" respawn="false" >
     <param name="base_watchdog_timeout" value="0.2"/>
 </node>
 <!--include file="$(find movingobstaclesrhc)/launch/amcl_corridor.launch" /-->

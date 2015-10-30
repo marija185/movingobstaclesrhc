@@ -1,0 +1,8 @@
+
+bool stop
+int32 loop_id
+float64 x
+float64 y
+bool ismine
+---
+bool agreed

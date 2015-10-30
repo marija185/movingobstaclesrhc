@@ -1,0 +1,14 @@
+<launch>
+
+<!--
+<node pkg="amcl" type="amcl" name="amcl" output="screen">
+uncomment this and comment line beneath for amcl localization
+<node pkg="amcl" type="amcl" name="amcl" respawn="true">
+-->
+<node pkg="fake_localization" type="fake_localization" name="amcl" respawn="true">
+
+
+  <!--param name="delta_yaw" value="-1.5707963267949"/-->
+</node>
+</launch>
+

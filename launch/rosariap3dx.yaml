@@ -1,0 +1,15 @@
+#
+# RosAria Driver Node
+#
+
+port:               /dev/ttyUSB0
+debug_aria:         false
+aria_log_filename:  Aria.log
+
+tf_prefix:          Pioneer3DX
+
+#TicksMM:            132
+#DriftFactor:        0
+#RevCount:           36300
+
+cmd_vel_timeout:    2.0

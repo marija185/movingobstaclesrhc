@@ -1,0 +1,43 @@
+<launch>
+
+<!-- For simulation in stage 
+  <param name="/use_sim_time" value="true"/>-->
+
+<!-- For using amcl localization -->
+<node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage)/krunolab.yaml" respawn="false" >
+<param name="frame_id" value="/map" />
+</node>
+
+
+<!-- For real robot amcl localization -->
+<include file="$(find movingobstaclesrhc)/launch/amcl_robot.launch" />
+
+<!-- For real robot with hector_slam 
+<include file="$(find movingobstaclesrhc)/launch/hectorexp.launch" />
+-->
+<!-- For real robot with gmapping 
+<include file="$(find movingobstaclesrhc)/launch/gmappingexp.launch" />
+-->
+<!-- running the navigation -->
+    <node name="spoj" pkg="movingobstaclesrhc" type="spoj" >
+        <param name="base_frame" value="Pioneer3DX/base_link" />
+        <param name="odom_topic" value="/odom" />
+        <param name="scan_topic" value="/scan" />
+        <param name="cmd_vel_topic" value="cmd_vel" />
+        <param name="sick_angular_offset" type="double" value="0" />
+        <param name="vx_min" type="double" value="0" />
+        <param name="vx_max" type="double" value="600." />
+        <param name="dvx_max" type="double" value="300." />
+        <param name="w_min" type="double" value="-50." />
+        <param name="w_max" type="double" value="50." />
+        <param name="dw_max" type="double" value="50." />
+    </node>
+
+
+
+
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find movingobstaclesrhc)/dodich.rviz" /> 
+
+</launch>
+

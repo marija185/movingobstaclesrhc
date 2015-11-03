@@ -7,14 +7,8 @@ extern GridMap *GM;
 extern CSpaceVoronoi *cspace;
 #endif
 
-
-
-
-
-
 int DStar::Init( int start_x, int start_y, int goal_x, int goal_y)
 {
-
 	racunaoupromjeni=0;
     time_stamp_counter++;       //azuriranje trenutnog time_stampa
 //     printf("DStar::Init> time_stamp_counter=%d\n",time_stamp_counter);
@@ -605,50 +599,6 @@ bool    DStar::SearchPath()
 	  //      NumElemPromjena=0;//to se radi u Planneru ali zbog debuganja moram tu napisati, a sad bum u moj.cc to napisala da tam mogu crtati
     }
 //------------------------------------------------------------
-
-if (0 && brojac_izracuna==0){
-
-    negative_cell.x=Start.x+10;
-    negative_cell.y=Start.y+10;
-    //element.x=Start.x + 30;
-        //element.y=Start.y - 5;
-    map[negative_cell.x][negative_cell.y].traversal_cost=-100;
-    //map[element.x][element.y].traversal_cost=-100;
-    if ( (map[negative_cell.x][negative_cell.y].tag==CLOSED))// && (map[element.x][element.y].h_cost_int<OBSTACLE) ) //injega
-    		      {
-
-    			      insertNode(negative_cell,map[negative_cell.x][negative_cell.y].h_cost_int);
-    			      watchdog_counter++;
-    		      }
-
-   /* if ( (map[element.x][element.y].tag==CLOSED))// && (map[element.x][element.y].h_cost_int<OBSTACLE) ) //injega
-        		      {
-
-        			      insertNode(element,map[element.x][element.y].h_cost_int);
-        			      watchdog_counter++;
-        		      }
-*/
-
-}
-if (prviput==1){
-	map[negative_cell.x][negative_cell.y].traversal_cost=-100;
-}
-//if (negative_cell.x!=-1)
-//  map[negative_cell.x][negative_cell.y].traversal_cost=-100;
-
-if (Start - negative_cell<=1){
-	map[negative_cell.x][negative_cell.y].traversal_cost=2;
-	if ( (map[negative_cell.x][negative_cell.y].tag==CLOSED))// && (map[element.x][element.y].h_cost_int<OBSTACLE) ) //injega
-	    		      {
-
-	    			      insertNode(negative_cell,map[negative_cell.x][negative_cell.y].h_cost_int);
-	    			      watchdog_counter++;
-	    		      }
-//	    		      negative_cell.x=-1;
-//	    		      negative_cell.y=-1;
-}
-
-blacklist.clear();
 //all changed nodes are inserted    
     
 //tu sam stavila pocetak vremena
@@ -783,10 +733,6 @@ if (gettimeofday(&timeStart, NULL) == 0)
 	pipodjednom=false;//tu ga resetiram
 	return true;
 	    }
-
-
-
-
       processState();
       ++watchdog_counter;
       
@@ -799,68 +745,6 @@ if (gettimeofday(&timeStart, NULL) == 0)
       }
 
     }   //od while
-
- if (blacklist.size()>0) {
-	  //adjust costs for blacklist
-
-	    //find the best neighbor pointing to the negative cell
-
-	    int min_cell=map[blacklist.front().x + xofs[0]] [blacklist.front().y + yofs[0]].k_cost_int;
-	    I_point min_cell_around_neg;
-
-	    min_cell_around_neg.x=blacklist.front().x + xofs[0];
-	    min_cell_around_neg.y=(blacklist.front().y + yofs[0]);
-
-	    #ifdef DSTAR_EIGHT_CONNECTED
-	  		for ( int i = 1; i < 8; i++ ) //for all neighbors
-	  #else
-	  		for ( int i = 1; i < 4; i++ ) //for all neighbors
-	  #endif
-
-	  		{
-	  //  for (int i=0;i<8;i++){
-
-	              if (map[blacklist.front().x + xofs[i]] [blacklist.front().y + yofs[i]].k_cost_int<min_cell)
-
-	  	  {
-	  		  min_cell=map[blacklist.front().x + xofs[i]] [blacklist.front().y + yofs[i]].k_cost_int;
-	            min_cell_around_neg.x=blacklist.front().x + xofs[i];
-	            min_cell_around_neg.y=(blacklist.front().y + yofs[i]);
-	  	  }
-
-	    }
-
-
-
-	  		int cost_travel=map[blacklist[0].x][blacklist[0].y].traversal_cost;
-
-	  		if ((blacklist[0].x - min_cell_around_neg.x!=0)  && (blacklist[0].y - min_cell_around_neg.y !=0)) {
-	  			  map[blacklist[0].x] [blacklist[0].y].k_cost_int=min_cell + COSTDIAGONAL*cost_travel;
-	  		      map[blacklist[0].x] [blacklist[0].y].h_cost_int=map[blacklist[0].x] [blacklist[0].y].k_cost_int;
-	  		}
-	  		else{
-	  			map[blacklist[0].x] [blacklist[0].y].k_cost_int=min_cell + COSTSTRAIGHT*cost_travel;;
-	  			map[blacklist[0].x] [blacklist[0].y].h_cost_int=map[blacklist[0].x] [blacklist[0].y].k_cost_int;
-	  		}
-
-	  		for (int i=1; i<blacklist.size();i++) {
-	  			cost_travel=map[blacklist[i].x][blacklist[i].y].traversal_cost;
-
-	  			if ((blacklist[i].x - blacklist[i-1].x!=0)  && (blacklist[i].y - blacklist[i-1].y!=0)) {
-	  	  map[blacklist[i].x] [blacklist[i].y].k_cost_int=map[blacklist[i-1].x] [blacklist[i-1].y].k_cost_int - COSTDIAGONAL*cost_travel;;
-	        map[blacklist[i].x] [blacklist[i].y].h_cost_int=map[blacklist[i].x] [blacklist[i].y].k_cost_int;
-	  		}
-
-	  		else {
-	      	  map[blacklist[i].x] [blacklist[i].y].k_cost_int=map[blacklist[i-1].x] [blacklist[i-1].y].k_cost_int - COSTSTRAIGHT*cost_travel;;
-	      	        map[blacklist[i].x] [blacklist[i].y].h_cost_int=map[blacklist[i].x] [blacklist[i].y].k_cost_int;
-	        }
-	        printf("adjust blacklist (%d,%d) h %d\n",blacklist[i-1].x, blacklist[i-1].y, map[blacklist[i-1].x] [blacklist[i-1].y].k_cost_int);
-	    }
-
-blacklist.clear();
-
- }
 
     printf("DStar SearchPath> empty list!!!!\n");
   } 
@@ -912,11 +796,6 @@ blacklist.clear();
   azurirani=0;
 
   brojac_izracuna++;
-
-
-
-
-
   return true;
 }
 
@@ -1622,50 +1501,8 @@ void DStar::processState() {
 	if (k_val>OBSTACLE) k_val=OBSTACLE+1.;
 	if (f_val>OBSTACLE) f_val=OBSTACLE+1.;
 
-
-
-
-	  //blacklist
-	// if new cell has a negative cost
-
-	if (map[MinCostElemLista.x][MinCostElemLista.y].traversal_cost<0 && (k_val==h_val)){
-			  //generate blacklist
-		I_point element;
-		element=MinCostElemLista;
-
-		blacklist.push_back(MinCostElemLista); // push negative cell to the blacklist
-
-	//add on the list path from the negative cell to the goal
-		while  ( (element.x!=Goal.x || element.y!=Goal.y) &&  map[element.x][element.y].k_cost_int == map[element.x][element.y].h_cost_int )
-		{
-
-			if (map[element.x][element.y]._next.x!=-1 && map[element.x][element.y]._next.y!=-1)
-			{
-				element=map[element.x][element.y]._next;
-        printf("blacklist element %d %d\n",element.x,element.y);
-		    if (!(std::find(blacklist.begin(), blacklist.end(), element)==blacklist.end() && !(element==blacklist.back()) )){
-		      printf("blacklist ponavljanje elementa!\n");
-		      break;
-		    }
-		    blacklist.push_back(element);   // push elements on a blacklist
- 			}
-			else
-			{
-				std::cout << "pointer with forbidden value" << std::endl;
-        break;
-			}
-
-		  }
-	}
-
-
-
-
-
-
-
 	// RAISE STANJE
-	if (1 || (k_val < h_val) )//tu najbolji nije prepreka
+	if (k_val < h_val)//tu najbolji nije prepreka
 	{
 		//printf("raise");
 #ifdef DSTAR_EIGHT_CONNECTED 
@@ -1694,14 +1531,8 @@ void DStar::processState() {
 
         //postavljen cost c izmedju najboljeg stanja i susjeda
         arc_cost( point.x, point.y, MinCostElemLista.x, MinCostElemLista.y);
-	if ( (map[point.x][point.y].tag!=NEW) && (LESSEQ(f_point, h_point, f_val, k_val))
-			&& (h_val > h_point + c*travCost[d])&& (c<OBSTACLE)&& ((h_point<OBSTACLE)||(h_val<OBSTACLE))
-			&& (std::find(blacklist.begin(), blacklist.end(), point)==blacklist.end() && !(point==blacklist.back()) )
-			&& (map[point.x][point.y].traversal_cost>=0)
-			)//
-
-
-	{
+	if ( (map[point.x][point.y].tag!=NEW) && (LESSEQ(f_point, h_point, f_val, k_val)) && (h_val > h_point + c*travCost[d])&& (c<OBSTACLE)&& ((h_point<OBSTACLE)||(h_val<OBSTACLE)))// 
+		{
 
 		  
 
@@ -1742,10 +1573,8 @@ void DStar::processState() {
 
 //postavljen cost c izmedju najboljeg stanja i susjeda
 	arc_cost( MinCostElemLista.x, MinCostElemLista.y, point.x, point.y);//prvi nadodani uvjet je da ne ode u dedend bezveze
-	if ( ((std::find(blacklist.begin(), blacklist.end(), point)==blacklist.end() && !(point==blacklist.back()) ))
-	  && ( ((map[point.x][point.y].tag==NEW)&&(0||c<OBSTACLE)&&(0||h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next.x == MinCostElemLista.x) && (map[point.x][point.y]._next.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && (1||(h_point<OBSTACLE)||(h_val<OBSTACLE)) && (1||(h_point<OBSTACLE)||(c<OBSTACLE))) || ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE))))
-	)
-	{
+	if ( ((map[point.x][point.y].tag==NEW)&&(0||c<OBSTACLE)&&(0||h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next.x == MinCostElemLista.x) && (map[point.x][point.y]._next.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && (1||(h_point<OBSTACLE)||(h_val<OBSTACLE)) && (1||(h_point<OBSTACLE)||(c<OBSTACLE))) || ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE))) )
+		{
 			if ((h_val>OBSTACLE)&&(k_val>OBSTACLE)){
 				printf("fat LOWER h_val=%d k_val=%d c*travCost[%d]=%d\n",h_val,k_val,d,c*travCost[d]);
 				pipodjednom=true;
@@ -1791,10 +1620,8 @@ void DStar::processState() {
 
         //postavlja c za prijelaz izmedju susjeda i najboljeg
         arc_cost( MinCostElemLista.x, MinCostElemLista.y, point.x, point.y);
-	if ( ((std::find(blacklist.begin(), blacklist.end(), point)==blacklist.end() && !(point==blacklist.back()) ))
-	   && ( ((map[point.x][point.y].tag==NEW)&&(0||c<OBSTACLE)&&(0||h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next.x == MinCostElemLista.x) && (map[point.x][point.y]._next.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && (1||(h_point<OBSTACLE)||(h_val<OBSTACLE)) && (1||(h_point<OBSTACLE)||(c<OBSTACLE))) )
-	)
-	{
+	if ( ((map[point.x][point.y].tag==NEW)&&(0||c<OBSTACLE)&&(0||h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next.x == MinCostElemLista.x) && (map[point.x][point.y]._next.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && (1||(h_point<OBSTACLE)||(h_val<OBSTACLE)) && (1||(h_point<OBSTACLE)||(c<OBSTACLE))) )
+		{
 
 			map[point.x][point.y]._next.x = MinCostElemLista.x;
 					map[point.x][point.y]._next.y = MinCostElemLista.y;
@@ -1803,10 +1630,8 @@ void DStar::processState() {
 		}
 		else
         {
-		if ( ((std::find(blacklist.begin(), blacklist.end(), MinCostElemLista)==blacklist.end() && !(MinCostElemLista==blacklist.back()) ))
-			&& ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && (map[MinCostElemLista.x][MinCostElemLista.y].tag == CLOSED))
-		 )
-				{
+		if ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && (map[MinCostElemLista.x][MinCostElemLista.y].tag == CLOSED))
+		 {
 
 			 insertNode(MinCostElemLista, h_val);
 	    //printf("opet raise obradjen");
@@ -1814,10 +1639,8 @@ void DStar::processState() {
 		else
         {
         arc_cost( point.x,point.y,MinCostElemLista.x, MinCostElemLista.y);
-		if ( ((std::find(blacklist.begin(), blacklist.end(), point)==blacklist.end() && !(point==blacklist.back()) ))
-		   && ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_val > h_point + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && (map[point.x][point.y].tag == CLOSED) && LESS(f_val, k_val, f_point, h_point))
-        )
-		{
+		if ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_val > h_point + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && (map[point.x][point.y].tag == CLOSED) && LESS(f_val, k_val, f_point, h_point))
+              {
 
 		      insertNode(point, h_point);
 
@@ -2328,8 +2151,7 @@ void    DStar::insertNodeReverse( I_point element, int h_new )
       //zadnja verzija---c(x,y)=c(y,x) i to veci broj uvijek gledano iz cost mape
 void DStar::arc_cost(int X_cell_x, int X_cell_y, int Y_cell_x, int Y_cell_y)
 {
-  c=map[ X_cell_x ][ X_cell_y ].traversal_cost;
-	//c = std::max(map[ X_cell_x ][ X_cell_y ].traversal_cost, map[Y_cell_x ][ Y_cell_y ].traversal_cost);
+  c = std::max(map[ X_cell_x ][ X_cell_y ].traversal_cost, map[Y_cell_x ][ Y_cell_y ].traversal_cost); 
 //  c = (map[ X_cell_x ][ X_cell_y ].traversal_cost, map[Y_cell_x ][ Y_cell_y ].traversal_cost)/2; //no nice interpolation properties, it must be max
   if ((map[ X_cell_x ][ X_cell_y ].cspace_occupied==true)||(map[Y_cell_x ][ Y_cell_y ].cspace_occupied==true)||(map[ X_cell_x ][ X_cell_y ].prepreka_bool==true)||(map[Y_cell_x ][ Y_cell_y ].prepreka_bool==true)){
   	c=OBSTACLE;

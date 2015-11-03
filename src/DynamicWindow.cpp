@@ -1594,7 +1594,7 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
 		C.x=temp.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
 		C.y=temp.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
 		best=DS->map[temp.x][temp.y]._next;
-		traversalcostVDStar=1;//DS->map[temp.x][temp.y].traversal_cost;
+		traversalcostVDStar=DS->map[temp.x][temp.y].traversal_cost;
 		t=th;
 		while (t>=2*M_PI) t-=2*M_PI;
 		while (t<0) t+=2*M_PI;
@@ -1677,11 +1677,11 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
   		if ((naCilju)||(best.x==-1))
   		{
   		  alfa=WH->global_goal_workhorse.th;
-  		  traversalcostbest=1; //traversalcostVDStar;
+  		  traversalcostbest=traversalcostVDStar;
   		  best=temp;
   		}else{     
         alfa=atan2((best.y-temp.y),(best.x-temp.x));
-        traversalcostbest=1; //DS->map[best.x][best.y].traversal_cost;
+        traversalcostbest=DS->map[best.x][best.y].traversal_cost;
       }
 //  		costrot=(double)(COSTSTRAIGHT)/(M_PI);
   		costrot=(double)(COSTDIAGONAL-COSTSTRAIGHT)/(2.*M_PI);
@@ -2268,7 +2268,7 @@ if (kaozacdw==0){
 						   pm1.y=temp.y+yofs[d];
 						   temptraversalcost = std::max(1., (MAXDISTANCE - floor(cspace->getDistanceInCells(PM1))));
 #else
-						   temptraversalcost=1;//DS->map[temp.x+xofs[d]][temp.y+yofs[d]].traversal_cost;
+						   temptraversalcost=DS->map[temp.x+xofs[d]][temp.y+yofs[d]].traversal_cost;
 #endif					   
 					   if (temp_min_distance+temptraversalcost*vertexcost<min_distance+min_traversalcost*vertexcost){
 						   min_distance=temp_min_distance;
@@ -2300,7 +2300,7 @@ if (kaozacdw==0){
 						   pm2.y=temp.y+yofs[d];
 						   temptraversalcost = std::max(1., (MAXDISTANCE - floor(cspace->getDistanceInCells(PM2))));
 #else
-						   temptraversalcost=1;//DS->map[temp.x+xofs[d]][temp.y+yofs[d]].traversal_cost;
+						   temptraversalcost=DS->map[temp.x+xofs[d]][temp.y+yofs[d]].traversal_cost;
 #endif					   
 					   if (temp_min_distance+temptraversalcost*vertexcost<min_distance2+min_traversalcost2*vertexcost){
 						   min_distance2=temp_min_distance;
@@ -2309,7 +2309,7 @@ if (kaozacdw==0){
 				   }
 				   if (abs(A.x-M3.x)+abs(A.y-M3.y)==GM->Map_Cell_Size){//around vertex M3
 					   temp_min_distance=DS->map[temp.x+xofs[d]][temp.y+yofs[d]].h_cost_int;//+ costrot*delta*temptraversalcost;// + costrot*delta*traversalcostVDStar;// 
-						 temptraversalcost=1;//DS->map[temp.x+xofs[d]][temp.y+yofs[d]].traversal_cost;
+						 temptraversalcost=DS->map[temp.x+xofs[d]][temp.y+yofs[d]].traversal_cost;
 					   if (temp_min_distance+temptraversalcost*vertexcost<min_distance3+min_traversalcost3*vertexcost){
 						   min_distance3=temp_min_distance;
 						   min_traversalcost3=temptraversalcost;
@@ -2317,7 +2317,7 @@ if (kaozacdw==0){
 				   }
 				   if (abs(A.x-M4.x)+abs(A.y-M4.y)==GM->Map_Cell_Size){//around vertex M4
 					   temp_min_distance=DS->map[temp.x+xofs[d]][temp.y+yofs[d]].h_cost_int;//+ costrot*delta*temptraversalcost;// + costrot*delta*traversalcostVDStar;// 
-						 temptraversalcost=1;//DS->map[temp.x+xofs[d]][temp.y+yofs[d]].traversal_cost;
+						 temptraversalcost=DS->map[temp.x+xofs[d]][temp.y+yofs[d]].traversal_cost;
 					   if (temp_min_distance+temptraversalcost*vertexcost<min_distance4+min_traversalcost4*vertexcost){
 						   min_distance4=temp_min_distance;
 						   min_traversalcost4=temptraversalcost;
@@ -2328,15 +2328,15 @@ if (kaozacdw==0){
 			   }
 
 //test 
-          min_traversalcost=1;
-          min_traversalcost2=1;
-          min_traversalcost3=1;
-          min_traversalcost4=1; //must not use occupancy values in interpolation - produces loc min
-          traversalcostVDStarUpOri=1;
-          min_traversalcostUpOri1=1;
-          min_traversalcostUpOri2=1;
-          traversalcostVDStar=1;
-          traversalcostbest=1;
+//          min_traversalcost=1;
+//          min_traversalcost2=1;
+//          min_traversalcost3=1;
+//          min_traversalcost4=1; //must not use occupancy values in interpolation - produces loc min
+//          traversalcostVDStarUpOri=1;
+//          min_traversalcostUpOri1=1;
+//          min_traversalcostUpOri2=1;
+//          traversalcostVDStar=1;
+//          traversalcostbest=1;
 			   VM1=min_distance+vertexcost*min_traversalcost;
 			   VM2=min_distance2+vertexcost*min_traversalcost2;
 
@@ -2347,7 +2347,7 @@ if (kaozacdw==0){
 			    Scell.x=(A1cell.x+A2cell.x)/2;
 			    Scell.y=(A1cell.y+A2cell.y)/2;
 			    if (DS->map[Scell.x][Scell.y].h_cost_int<VDStar_A){
-			      VP=DS->map[Scell.x][Scell.y].h_cost_int+COSTSTRAIGHT/2.;//*DS->map[Scell.x][Scell.y].traversal_cost;
+			      VP=DS->map[Scell.x][Scell.y].h_cost_int+COSTSTRAIGHT/2.*DS->map[Scell.x][Scell.y].traversal_cost;
 			    }else{
 			      VP=VDStar_A+COSTSTRAIGHT/2.*traversalcostVDStar;
 			    }
@@ -5899,7 +5899,7 @@ double DynamicWindow::PathAlignment()
    if (svi_uvjeti==1){//za dodatni uvjet po svim tockama
 	   if(TB.flag[ni][nj]==CLEAR){
 		   for(int i=1;i<N_KL-1;i++){//do predzadnjeg
-			   if ((KL.S[i]<KL.S[N_KL-1]) ){
+			   if ((KL.S[i]<KL.S[N_KL-1]) || (KL.S[i]<decreasingslope*KL.S[i+1])){
 				   TB.flag[ni][nj]=NON_ADMISSIBLE;
 				   break;
 			   }
@@ -5907,7 +5907,7 @@ double DynamicWindow::PathAlignment()
 	   }
 	   if(TB_plus.flag[ni][nj]==CLEAR){
 		   for(int i=1;i<N_KL-1;i++){//do predzadnjeg
-			   if ((KL_plus.S[i]<KL_plus.S[N_KL-1]) ){
+			   if ((KL_plus.S[i]<KL_plus.S[N_KL-1]) || (KL_plus.S[i]<decreasingslope*KL_plus.S[i+1])){
 //			   			      printf("i=%d S(i)=%.15f, S(end)=%.15f\t",i,KL_plus.S[i],KL_plus.S[N_KL-1]);
 				   TB_plus.flag[ni][nj]=NON_ADMISSIBLE;
 				   break;
@@ -5917,7 +5917,7 @@ double DynamicWindow::PathAlignment()
 #if ROT
 	   if(TB_plus1.flag[ni][nj]==CLEAR){
 		   for(int i=1;i<N_KL-1;i++){//do predzadnjeg
-			   if ((KL_plus1.S[i]<KL_plus1.S[N_KL-1]) ){
+			   if ((KL_plus1.S[i]<KL_plus1.S[N_KL-1]) || (KL_plus1.S[i]<decreasingslope*KL_plus1.S[i+1])){
 //			   			      printf("i=%d S(i)=%.15f, S(end)=%.15f\t",i,KL_plus.S[i],KL_plus.S[N_KL-1]);
 				   TB_plus1.flag[ni][nj]=NON_ADMISSIBLE;
 				   break;
@@ -5926,7 +5926,7 @@ double DynamicWindow::PathAlignment()
 	   }
 	   if(TB_plus2.flag[ni][nj]==CLEAR){
 		   for(int i=1;i<N_KL-1;i++){//do predzadnjeg
-			   if ((KL_plus2.S[i]<KL_plus2.S[N_KL-1]) ){
+			   if ((KL_plus2.S[i]<KL_plus2.S[N_KL-1]) || (KL_plus2.S[i]<decreasingslope*KL_plus2.S[i+1])){
 //			   			      printf("i=%d S(i)=%.15f, S(end)=%.15f\t",i,KL_plus.S[i],KL_plus.S[N_KL-1]);
 				   TB_plus2.flag[ni][nj]=NON_ADMISSIBLE;
 				   break;
@@ -5936,7 +5936,7 @@ double DynamicWindow::PathAlignment()
 #endif
 	   if(TB_minus.flag[ni][nj]==CLEAR){
 		   for(int i=1;i<N_KL-1;i++){//do predzadnjeg
-			   if ((KL_minus.S[i]<KL_minus.S[N_KL-1]) ){
+			   if ((KL_minus.S[i]<KL_minus.S[N_KL-1]) || (KL_minus.S[i]<decreasingslope*KL_minus.S[i+1])){
 				   TB_minus.flag[ni][nj]=NON_ADMISSIBLE;
 				   break;
 			   }
@@ -5944,7 +5944,7 @@ double DynamicWindow::PathAlignment()
 	   }
 	   if(TB_minus2.flag[ni][nj]==CLEAR){
 		   for(int i=1;i<N_KL-1;i++){//do predzadnjeg
-			   if ((KL_minus2.S[i]<KL_minus2.S[N_KL-1]) ){
+			   if ((KL_minus2.S[i]<KL_minus2.S[N_KL-1]) || (KL_minus2.S[i]<decreasingslope*KL_minus2.S[i+1])){
 				   TB_minus2.flag[ni][nj]=NON_ADMISSIBLE;
 				   break;
 			   }
@@ -6394,7 +6394,7 @@ double DynamicWindow::Breakage_traj(){
 #if IDEAL_MODEL
   if ((kriterij==1)&&(path_alignment<MAXCOST)){
    for(int i=1;i<N_KL-1;i++){//do predzadnjeg
-	   if ((KL_breakage.S[1]<KL_breakage.S[N_KL-1] && (svi_uvjeti==-1)) || (KL_breakage.S[i]<KL_breakage.S[N_KL-1] && (svi_uvjeti==1)) ){
+	   if ((KL_breakage.S[1]<KL_breakage.S[N_KL-1] && (svi_uvjeti==-1)) || (KL_breakage.S[i]<KL_breakage.S[N_KL-1] && (svi_uvjeti==1)) || (KL_breakage.S[i]<decreasingslope*KL_breakage.S[i+1]) ){
 		   path_alignment=MAXCOST; 
 		   break;
 	   }

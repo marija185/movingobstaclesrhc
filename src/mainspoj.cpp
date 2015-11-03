@@ -1000,7 +1000,7 @@ void moj::gotogoal(R_point newgoal){
         printf("Planner> Goal is out of the map borders!\n");
 
      }
-  DS->negative_cell.x=newgoal_i.x-10;
+  DS->negative_cell.x=newgoal_i.x;
   DS->negative_cell.y=newgoal_i.y+10;
 
 

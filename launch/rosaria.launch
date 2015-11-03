@@ -1,0 +1,14 @@
+<launch>
+	<!-- transformations -->
+	<!-- run ROSAria to control the pioneer -->
+	<node pkg="rosaria" type="RosAria" name="Pioneer3DX_rosaria" output="screen">
+		<rosparam file="$(find movingobstaclesrhc)/launch/rosariap3dx.yaml" command="load" />
+
+    <remap from="~pose"            to="/odom"/><!--/Pioneer3AT/pose" />-->
+    <remap from="~sonar"           to="/Pioneer3DX/sonar" />
+    <remap from="~cmd_vel"         to="/cmd_vel"/><!--/Pioneer3AT/cmd_vel" />-->
+    <remap from="~bumper_state"    to="/Pioneer3DX/bumper_state" />
+    <remap from="~battery_voltage" to="/Pioneer3DX/battery_voltage" />
+	</node>
+	
+</launch>

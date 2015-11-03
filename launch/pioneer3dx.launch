@@ -1,0 +1,10 @@
+<launch>
+
+<!-- Select the robot-driver you wish to use -->
+<include file="$(find movingobstaclesrhc)/launch/rosaria.launch" />
+
+<node pkg="tf" type="static_transform_publisher" name="base_link_laser" args="0.0 0 0.6 0.0 0 0 Pioneer3DX/base_link /laser 40"/>
+	 
+</launch>
+
+

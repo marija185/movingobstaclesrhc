@@ -28,7 +28,8 @@ roslaunch src/movingobstaclesrhc/launch/corridoramcltest.launch
 
 run the robot
 
-sudo chmod a+rw /dev/ttyUSB0
+sudo chmod a+rw /dev/ttyUSB0 (controller)
+sudo chmod a+rw /dev/ttyUSB1 (laser)
 roslaunch src/movingobstaclesrhc/launch/pioneer3dx.launch (transform base_link laser)
 roslaunch src/movingobstaclesrhc/launch/navigation_robot.launch (amcl localization and rhc navigation)
 

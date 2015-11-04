@@ -34,3 +34,15 @@ roslaunch src/movingobstaclesrhc/launch/pioneer3dx.launch (transform base_link l
 roslaunch src/movingobstaclesrhc/launch/navigation_robot.launch (amcl localization and rhc navigation)
 
 
+making a map:
+$ roslaunch src/movingobstaclesrhc/launch/pioneer3dx.launch
+$ roslaunch src/movingobstaclesrhc/launch/navigation_robot.launch (comment mapserver and amcl and uncomment hectorexp or gmapping)
+$ sudo apt-get install ros-indigo-teleop-twist-keyboard
+$ rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+$ rosrun map_server map_saver -f mapfile
+opening the mapfile in gimp, autocrop and just replace the old krunolab.pgm file in mapsforsimulatorstage/bitmaps, otherwise open yaml and put origin to zero, uncommenting amcl localization in the navigation_robot.launch
+
+if no amcl is used but only hector or gmapping then:
+change in movingobstaclesrhc/include/Params.h #define LOADMAP 0 and recompile the package movingobstaclesrhc
+
+

@@ -16,7 +16,7 @@ source setup.bash
 
 
 
-necessary packages: navigation_stage (for simulating), amcl, map-server
+necessary packages: navigation_stage (for simulating), amcl, map-server, libaria-dev
 
                    
 compiling:

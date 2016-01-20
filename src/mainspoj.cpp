@@ -1181,37 +1181,37 @@ if ((F = fopen("gridmapaMap.dat","wt")) != NULL)
 
 #if (RECTANGULAR==0) && 1
 ////pioneer2dx
-//	 for (int i=7; i<15; i++){
-//	    if (i<8){
-//      footprinty[0]=-2.*CELL_DIM;  footprintx[0]=1.2*CELL_DIM;
-//      footprinty[1]=-2.*CELL_DIM;  footprintx[1]=-1.2*CELL_DIM;
-//      footprinty[2]=-1.2*CELL_DIM;  footprintx[2]=-2.555*CELL_DIM;
-//      footprinty[3]=1.2*CELL_DIM;  footprintx[3]=-2.555*CELL_DIM;
-//      footprinty[4]=2.*CELL_DIM;  footprintx[4]=-1.2*CELL_DIM;
-//      footprinty[5]=2.*CELL_DIM;  footprintx[5]=1.2*CELL_DIM;
-//      footprinty[6]=1.2*CELL_DIM;  footprintx[6]=2.555*CELL_DIM;
-//      footprinty[7]=-1.2*CELL_DIM;  footprintx[7]=2.555*CELL_DIM;
-//      }else{
-//      footprintx[i]=footprintx[0];
-//      footprinty[i]=footprinty[0];
-//      }
-//    }
-//circular
 	 for (int i=7; i<15; i++){
 	    if (i<8){
-      footprinty[0]=0;  footprintx[0]=width/2.*CELL_DIM;
-      footprinty[1]=width/2./sqrt(2.)*CELL_DIM;  footprintx[1]=footprinty[1];
-      footprinty[2]=footprintx[0];  footprintx[2]=0;
-      footprinty[3]=footprinty[1];  footprintx[3]=-1.*footprintx[1];
-      footprinty[4]=0;  footprintx[4]=-1.*footprintx[0];
-      footprinty[5]=footprintx[3];  footprintx[5]=footprintx[3];
-      footprinty[6]=footprintx[4];  footprintx[6]=0;
-      footprinty[7]=footprintx[3];  footprintx[7]=footprintx[1];
+      footprinty[0]=-2.*CELL_DIM;  footprintx[0]=1.2*CELL_DIM;
+      footprinty[1]=-2.*CELL_DIM;  footprintx[1]=-1.2*CELL_DIM;
+      footprinty[2]=-1.2*CELL_DIM;  footprintx[2]=-2.555*CELL_DIM;
+      footprinty[3]=1.2*CELL_DIM;  footprintx[3]=-2.555*CELL_DIM;
+      footprinty[4]=2.*CELL_DIM;  footprintx[4]=-1.2*CELL_DIM;
+      footprinty[5]=2.*CELL_DIM;  footprintx[5]=1.2*CELL_DIM;
+      footprinty[6]=1.2*CELL_DIM;  footprintx[6]=2.555*CELL_DIM;
+      footprinty[7]=-1.2*CELL_DIM;  footprintx[7]=2.555*CELL_DIM;
       }else{
       footprintx[i]=footprintx[0];
       footprinty[i]=footprinty[0];
       }
     }
+//circular
+//	 for (int i=7; i<15; i++){
+//	    if (i<8){
+//      footprinty[0]=0;  footprintx[0]=width/2.*CELL_DIM;
+//      footprinty[1]=width/2./sqrt(2.)*CELL_DIM;  footprintx[1]=footprinty[1];
+//      footprinty[2]=footprintx[0];  footprintx[2]=0;
+//      footprinty[3]=footprinty[1];  footprintx[3]=-1.*footprintx[1];
+//      footprinty[4]=0;  footprintx[4]=-1.*footprintx[0];
+//      footprinty[5]=footprintx[3];  footprintx[5]=footprintx[3];
+//      footprinty[6]=footprintx[4];  footprintx[6]=0;
+//      footprinty[7]=footprintx[3];  footprintx[7]=footprintx[1];
+//      }else{
+//      footprintx[i]=footprintx[0];
+//      footprinty[i]=footprinty[0];
+//      }
+//    }
 #endif
 
 #if RECTANGULAR

@@ -12,9 +12,9 @@
 
 //DIMENZIJE DINAMICKOG PROZORA (ukupno je dimenzija +1)  MORA biti PARAN broj za simetriju!!!
 //(+1)Dimenzija translacijskih brzina dinamickog prozora
-#define V_DIM		4//2			
+#define V_DIM		2//2			
 // (+1)Dimenzija rotacijskih brzina dinamickog prozora
-#define W_DIM		6//2
+#define W_DIM		2//2
 //omnidrive robot
 #define OMNIDRIVE	0
 //(+1)Dimension sideway speed
@@ -91,8 +91,8 @@
 #define SC2   100.
 #define SC_W 0.0
 //TOLERANCIJA BRZINA -  brzinom 0 se smatra i brzina od 5mm/s
-#define V_TOLERANCE  3. //(0.01*DV_MAX)  //3 mm/s u milimetrima
-#define W_TOLERANCE  (1.*M_PI/180.) //(0.01*DW_MAX)  //1 deg/s u radijanima (5.*M_PI/180.)
+#define V_TOLERANCE  (0.01*DV_MAX)  //3 mm/s u milimetrima
+#define W_TOLERANCE  (0.01*DW_MAX)  //1 deg/s u radijanima (5.*M_PI/180.)
 //maximal value of the path cost in the criterium
 #define MAXCOST 1000000000.
 

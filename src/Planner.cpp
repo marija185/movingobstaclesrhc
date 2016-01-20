@@ -1948,7 +1948,7 @@ void Planner::Puni(int i, int j, int star_size_x, int star_size_y, int robot_mas
 					if (star_map[temp.x][temp.y].prepreka_bool==false){//ovaj uvjet se pita tu gore jer se maska i cost maska radi samo za slobodna polja
 //						if (((abs(k)<=robot_mask-1)&&(abs(l)<=robot_mask-1))||(abs(k)+abs(l)==robot_mask)) {//za robotovu masku...
 //						if ((abs(k)<=robot_mask)&&(abs(l)<=robot_mask)){//za robotovu masku...
-						if (1||((abs(k)<=robot_mask)&&(abs(l)<=robot_mask)&&(abs(k)+abs(l)<2*robot_mask))){//za robotovu masku...
+						if (0||((abs(k)<=robot_mask)&&(abs(l)<=robot_mask)&&(abs(k)+abs(l)<2*robot_mask))){//za robotovu masku...
 
 							//jos jedan uvjet o udaljenosti prepreke od centra polja, ruzno je jer koristim iz GM klase a ne preko ulaznih argumenata ali ne da mi se
 							double udaljenost=0.;
@@ -2018,7 +2018,7 @@ void Planner::Puni(int i, int j, int star_size_x, int star_size_y, int robot_mas
 					}//prepreka false
 					else {//ako je prepreka true naznaci preklapanje u robotovoj maski
 //						if (((abs(k)<=robot_mask-1)&&(abs(l)<=robot_mask-1))||(abs(k)+abs(l)==robot_mask)) {
-						if (1||(abs(k)<=robot_mask)&&(abs(l)<=robot_mask)&&(abs(k)+abs(l)<2*robot_mask)){
+						if (0||(abs(k)<=robot_mask)&&(abs(l)<=robot_mask)&&(abs(k)+abs(l)<2*robot_mask)){
 //						if ((abs(k)<=robot_mask)&&(abs(l)<=robot_mask)){
 							star_map[temp.x][temp.y].preprekaokolo++;//broji koliko ima prepreka okolo
 						}

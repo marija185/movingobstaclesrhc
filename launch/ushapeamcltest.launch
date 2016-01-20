@@ -1,20 +1,22 @@
 <launch>
-  <!--master auto="start"/-->
+  <master auto="start"/>
   <param name="/use_sim_time" value="true"/>
 
 
 
 
-<node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage)/corridor.yaml" respawn="false" >
+<node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage)/ushape.yaml" respawn="false" >
 <param name="frame_id" value="/map" />
 </node>
 
-<node pkg="stage_ros" type="stageros" name="stageros" args="$(find mapsforsimulatorstage)/corridoramcl.world" respawn="false" >
+<node pkg="stage_ros" type="stageros" name="stageros" args="$(find mapsforsimulatorstage)/ushapeamcl.world" respawn="false" >
     <param name="base_watchdog_timeout" value="0.2"/>
 </node>
-<!--include file="$(find movingobstaclesrhc)/launch/amcl_corridor.launch" /-->
+<!--include file="$(find movingobstaclesrhc)/launch/amcl_ushape.launch" /-->
+<!--include file="$(find movingobstaclesrhc)/launch/amcl_omni3.launch" /-->
 
 <include file="$(find movingobstaclesrhc)/launch/fake_corridor.launch" />
+
 
 <!-- running the navigation -->
     <node name="spoj" pkg="movingobstaclesrhc" type="spoj">
@@ -29,6 +31,8 @@
         <param name="w_min" type="double" value="-100." />
         <param name="w_max" type="double" value="100." />
         <param name="dw_max" type="double" value="100." />
+        <param name="map_width" type="double" value="20." />
+        <param name="map_height" type="double" value="20." />
     </node>
     
 

@@ -24,6 +24,8 @@ catkin_make
 
 run the simulation
 roslaunch src/movingobstaclesrhc/launch/corridoramcltest.launch
+roslaunch src/movingobstaclesrhc/launch/ushapeamcltest.launch
+roslaunch src/movingobstaclesrhc/launch/smaprot18p5amcltestomnidrive.launch
 
 
 run the robot

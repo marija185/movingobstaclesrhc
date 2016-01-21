@@ -12,9 +12,9 @@
 
 //DIMENZIJE DINAMICKOG PROZORA (ukupno je dimenzija +1)  MORA biti PARAN broj za simetriju!!!
 //(+1)Dimenzija translacijskih brzina dinamickog prozora
-#define V_DIM		2//2			
+#define V_DIM		4//2			
 // (+1)Dimenzija rotacijskih brzina dinamickog prozora
-#define W_DIM		2//2
+#define W_DIM		8//2
 //omnidrive robot
 #define OMNIDRIVE	0
 //(+1)Dimension sideway speed
@@ -44,7 +44,7 @@
 //objective function (1-sum, 0-last point)
 #define OBJECTIVE_SUM 1
 //conditions for stability 1-all points have cost ge than end point S(i)>=S(T); 0-none; -1- only S(0)>=S(T)
-#define OBJECTIVE_CONDITIONS 1
+#define OBJECTIVE_CONDITIONS 0
 //special calculation of cost function at goal
 #define SPECIAL_GOAL_F 0
 //including delay of 3 time steps of p3dx in kin model (3), 1 - old only 1 time step

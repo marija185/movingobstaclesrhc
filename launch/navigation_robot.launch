@@ -4,7 +4,7 @@
   <param name="/use_sim_time" value="true"/>-->
 
 <!-- For using amcl localization -->
-<node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage)/krunolab.yaml" respawn="false" >
+<node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage)/zari2map.yaml" respawn="false" >
 <param name="frame_id" value="/map" />
 </node>
 

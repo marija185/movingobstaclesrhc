@@ -2918,7 +2918,7 @@ void DynamicWindow::Kruzni_luk_sa_zaustavljanjem(){
 		}
 	}
 	bez_kracenja=1;//1 ako ne kratimo trajektorije da ne udaraju u prepreku, 0-kratimo
-	provjeraluka=1;//1 ako provjeravamo sijece li luk prepreku, 0 ako ne (staro)
+	provjeraluka=0;//1 ako provjeravamo sijece li luk prepreku, 0 ako ne (staro)
 	usecostmask=0; //1 ako smatramo sudarom vece vrijednosti costmaske da bi usporili robota
 	ellipse=ELLIPSE;//ako zamucujemo svaku tocku za provjeru sudara
 	int checkdiag=0; //provjeru ogranicenja za debug

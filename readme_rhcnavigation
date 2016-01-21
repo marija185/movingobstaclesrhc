@@ -16,7 +16,7 @@ source setup.bash
 
 
 
-necessary packages: navigation_stage (for simulating), amcl, map-server, libaria-dev
+necessary packages: navigation_stage (for simulating), amcl, map-server, libaria-dev, sicktoolbox_wrapper
 
                    
 compiling:
@@ -26,6 +26,7 @@ run the simulation
 roslaunch src/movingobstaclesrhc/launch/corridoramcltest.launch
 roslaunch src/movingobstaclesrhc/launch/ushapeamcltest.launch
 roslaunch src/movingobstaclesrhc/launch/smaprot18p5amcltestomnidrive.launch
+roslaunch src/movingobstaclesrhc/launch/zavodtest.launch
 
 
 run the robot

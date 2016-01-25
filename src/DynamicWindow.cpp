@@ -1832,7 +1832,7 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
 #if DSTAR3DORI
       double vertexcost;
       if (kaozacdw==1){
-        vertexcost=COSTSTRAIGHT;
+        vertexcost=COSTSTRAIGHT;//COSTDIAGONAL/2.; //COSTSTRAIGHT;//
       }else{
         vertexcost=COSTDIAGONAL/2.;
       }
@@ -2206,7 +2206,7 @@ if (kaozacdw==0){
       double temptraversalcost;
       double vertexcost;
       if (kaozacdw==1){
-        vertexcost=COSTSTRAIGHT;
+        vertexcost=COSTSTRAIGHT;//COSTDIAGONAL/2.; //COSTSTRAIGHT;
       }else{
         vertexcost=COSTDIAGONAL/2.;
       }

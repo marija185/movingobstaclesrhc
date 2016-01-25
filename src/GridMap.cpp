@@ -913,7 +913,7 @@ int GridMap::fill_Map()
 			  if (pamti==0){    //znaci da se ne uracunava u teziste ova celija inace bi ova varijabla bila > 0 da se radi o nestatickoj prepreci
 // 				  printf("pamti==0 (%d,%d), time_stamp=%d\n",cell_point_temp.x,cell_point_temp.y,Map[cell_point_temp.x][cell_point_temp.y].time_stamp);
 				  Map[cell_point_temp.x][cell_point_temp.y].time_stamp = counter;
-				  if (0){//ovo dodajem, sad se pune i staticki hitovi
+				  if (0){//ovo dodajem, sad se pune i staticki hitovi (narkoza)
 				  indeksimapepunjenje[numindeksimapepunjenje].x=cell_point_temp.x;   //azuriram indekse za planera
 			          indeksimapepunjenje[numindeksimapepunjenje].y=cell_point_temp.y;
 				  numindeksimapepunjenje++;
@@ -1292,7 +1292,7 @@ if (WH->LB.laser_pointer_new==0) //ako nema ocitanja od prvog lasera
 
 			  if (pamti==0){    
 				  Map[cell_point_temp.x][cell_point_temp.y].time_stamp = counter;
-				  if (0){//ovo dodajem, sad se pune i staticki hitovi
+				  if (0){//ovo dodajem, sad se pune i staticki hitovi (narkoza)
 				  indeksimapepunjenje[numindeksimapepunjenje].x=cell_point_temp.x; 
 			          indeksimapepunjenje[numindeksimapepunjenje].y=cell_point_temp.y;
 				  numindeksimapepunjenje++;

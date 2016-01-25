@@ -26,11 +26,11 @@
         <param name="cmd_vel_topic" value="cmd_vel" />
         <param name="sick_angular_offset" type="double" value="0" />
         <param name="vx_min" type="double" value="0" />
-        <param name="vx_max" type="double" value="600." />
+        <param name="vx_max" type="double" value="750." />
         <param name="dvx_max" type="double" value="300." />
         <param name="w_min" type="double" value="-50." />
         <param name="w_max" type="double" value="50." />
-        <param name="dw_max" type="double" value="50." />
+        <param name="dw_max" type="double" value="70." />
     </node>
 
 

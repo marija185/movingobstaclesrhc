@@ -695,7 +695,7 @@ if (gettimeofday(&timeStart, NULL) == 0)
       }
 
     //exhaustive search 0 instead of 1
-	  if (1&&(!(LESSEQ(f_old,k_old,Robot_f,Robot_h)))&&(prviput==0)&&(Robot_h<OBSTACLE))
+	  if (0&&(!(LESSEQ(f_old,k_old,Robot_f,Robot_h)))&&(prviput==0)&&(Robot_h<OBSTACLE))
       {
 	      PathExists=true;
         if (gettimeofday(&timeNow, NULL) == 0)

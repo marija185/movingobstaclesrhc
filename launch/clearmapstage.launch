@@ -1,0 +1,45 @@
+<launch>
+  <master auto="start"/>
+  <param name="/use_sim_time" value="true"/>
+
+
+
+
+<!-- For using amcl localization -->
+<node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage)/krunolab.yaml" respawn="false" >
+<param name="frame_id" value="/map" />
+</node>
+
+<!-- For simulation in stage --> 
+<node pkg="stage_ros" type="stageros" name="stageros" args="$(find mapsforsimulatorstage)/krunolab_p3dx.world" respawn="false" >
+    <param name="base_watchdog_timeout" value="0.2"/>
+</node>
+
+<!-- For simulation in stage with amcl localization -->
+<include file="$(find movingobstaclesrhc)/launch/amclsim_iaslab2.launch" />
+
+<!--
+    <node name="coverage" pkg="coveragedemining" type="coverage" >
+        <param name="base_frame" value="base_link" />
+        <param name="odom_topic" value="/odom" />
+        <param name="scan_topic" value="/base_scan" />
+        <param name="cmd_vel_topic" value="cmd_vel" />
+        <param name="sick_angular_offset" type="double" value="0" />
+        <param name="vx_min" type="double" value="0" />
+        <param name="vx_max" type="double" value="200." />
+        <param name="dvx_max" type="double" value="150." />
+        <param name="w_min" type="double" value="-50." />
+        <param name="w_max" type="double" value="50." />
+        <param name="dw_max" type="double" value="50." />
+    </node>
+-->
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find movingobstaclesrhc)/dodichsim.rviz" /> 
+
+
+
+
+
+
+
+</launch>
+

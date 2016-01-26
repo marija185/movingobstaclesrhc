@@ -39,7 +39,9 @@ generate_messages(
 )
 
 catkin_package(
-  CATKIN_DEPENDS std_msgs message_runtime  
+  CATKIN_DEPENDS std_msgs message_runtime
+  INCLUDE_DIRS include
+  LIBRARIES movingobstaclesrhc
 )
 
 include_directories(
@@ -47,9 +49,10 @@ include_directories(
   include
 )
 
+add_library(movingobstaclesrhc src/mainspoj.cpp src/WorkHorse.cpp src/DynamicWindow.cpp src/DStar.cpp src/GridMap.cpp src/Planner.cpp)
 add_executable(spoj src/mainspoj.cpp src/WorkHorse.cpp src/DynamicWindow.cpp src/DStar.cpp src/GridMap.cpp src/Planner.cpp)
 
-target_link_libraries(spoj ${catkin_LIBRARIES})
+target_link_libraries(spoj movingobstaclesrhc ${catkin_LIBRARIES})
 
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
@@ -61,7 +64,6 @@ target_link_libraries(spoj ${catkin_LIBRARIES})
 #rosbuild_find_ros_package(cspacevoronoi2p5D)
 #now ${pkg_PACKAGE_PATH} is set
 
-#rosbuild_add_library(movingobstaclesrhc src/mainspoj.cpp src/WorkHorse.cpp src/DynamicWindow.cpp src/DStar.cpp src/GridMap.cpp src/Planner.cpp)
 
 #add_subdirectory(cspacevoronoi2p5D/src)
 #add_subdirectory(/home/marija/programi/ros/ros_workspace/cspacevoronoi2p5D/src) nejde tak

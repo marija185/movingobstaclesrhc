@@ -71,11 +71,11 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //length of the robot (acc. x axis)
 #define ROBOT_MASKY (ceil(RRY/CELL_DIM))
 //using higher costs around obstacles
-#define COST_MASK 2//8//4//2 //(ROBOT_MASKY-ROBOT_MASK)
+#define COST_MASK 0//8//4//2 //(ROBOT_MASKY-ROBOT_MASK)
 //#define COST_MASK (ROBOT_MASKY-ROBOT_MASK+2)
 //#define COST_MASK (ROBOT_MASK+2)
 //podebljavam taj jedan cost_mask da ne bude 2 nego 3 (EMPTY+COST_MASK+DEBEL), stavi u 0 kad ne zelis koristiti
-#define DEBEL 10//4//10//10
+#define DEBEL 0//4//10//10
 #define LOW_COST 0
  //maska oko prepreka upisana u dstar mapu kao vrijednost koja se od EMPTY (=1) inkrementalno povecava sto je celija blize prepreci (4 znaci 4 celija oko prepreke)
 
@@ -123,7 +123,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //GABARITI ROBOTA
 //is the robot rectangular shape (1 yes, 0 circular)
 #define RECTANGULAR	0
-#define RR			256.//301.406//260.//560.//356.//paper 156//expbig 456.
+#define RR			356.//301.406//260.//560.//356.//paper 156//expbig 456.
 #define RRY			300.//498.//543.405//840.//598.//paper 798//expbig 698.
 #define GOAL_POSITION_TOLERANCE (CELL_DIM/2.*sqrt(2.))
 #define THETA_TOLERANCE (5*M_PI/180.)

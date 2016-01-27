@@ -1243,11 +1243,11 @@ if ((F = fopen("gridmapaMap.dat","wt")) != NULL)
       }
     }
 #else //rectangular shape
-  col.vertices.push_back(std::make_pair(-(double)length/2.0, -(double)width/2.0));
-  col.vertices.push_back(std::make_pair( (double)length/2.0, -(double)width/2.0));
-  col.vertices.push_back(std::make_pair( (double)length/2.0,  (double)width/2.0));
-  col.vertices.push_back(std::make_pair(-(double)length/2.0,  (double)width/2.0));
-	columns.push_back(col);
+//  col.vertices.push_back(std::make_pair(-(double)length/2.0, -(double)width/2.0));
+//  col.vertices.push_back(std::make_pair( (double)length/2.0, -(double)width/2.0));
+//  col.vertices.push_back(std::make_pair( (double)length/2.0,  (double)width/2.0));
+//  col.vertices.push_back(std::make_pair(-(double)length/2.0,  (double)width/2.0));
+//	columns.push_back(col);
 //husky s hratca
 //  col.vertices.push_back(std::make_pair(-4.5, -2.5));
 //  col.vertices.push_back(std::make_pair( 11.5, -2.5));
@@ -1258,6 +1258,12 @@ if ((F = fopen("gridmapaMap.dat","wt")) != NULL)
 //  col.vertices.push_back(std::make_pair( 5.5,  2.5));
 //  col.vertices.push_back(std::make_pair( -2.5,  2.5));
 //	columns.push_back(col);
+//nas husky
+  col.vertices.push_back(std::make_pair(-5.5, -3.5));
+  col.vertices.push_back(std::make_pair( 5.5, -3.5));
+  col.vertices.push_back(std::make_pair( 5.5,  3.5));
+  col.vertices.push_back(std::make_pair( -5.5,  3.5));
+	columns.push_back(col);
 	 for (int i=0; i<15; i++){
 	    if (i<4){
       footprintx[i]=col.vertices[i].first*CELL_DIM;

@@ -1259,10 +1259,10 @@ if ((F = fopen("gridmapaMap.dat","wt")) != NULL)
 //  col.vertices.push_back(std::make_pair( -2.5,  2.5));
 //	columns.push_back(col);
 //nas husky
-  col.vertices.push_back(std::make_pair(-5.5, -3.5));
-  col.vertices.push_back(std::make_pair( 5.5, -3.5));
-  col.vertices.push_back(std::make_pair( 5.5,  3.5));
-  col.vertices.push_back(std::make_pair( -5.5,  3.5));
+  col.vertices.push_back(std::make_pair(-5., -3.5));
+  col.vertices.push_back(std::make_pair( 5., -3.5));
+  col.vertices.push_back(std::make_pair( 5.,  3.5));
+  col.vertices.push_back(std::make_pair( -5.,  3.5));
 	columns.push_back(col);
 	 for (int i=0; i<15; i++){
 	    if (i<4){

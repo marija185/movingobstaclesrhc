@@ -91,7 +91,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 // interpolation of cost of 2D search
 #define DSTARINT 1
 // interpolation of cost of 3D search, use only for 3D search
-#define DSTAR3DINT 1
+#define DSTAR3DINT 0
 //test full3d search with ORI costs
 #define TEST3DSEARCH 0
 //koristenje reverznog D* prije D*
@@ -126,7 +126,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 #define RR			356.//301.406//260.//560.//356.//paper 156//expbig 456.
 #define RRY			300.//498.//543.405//840.//598.//paper 798//expbig 698.
 #define GOAL_POSITION_TOLERANCE (CELL_DIM/2.*sqrt(2.))
-#define THETA_TOLERANCE (5*M_PI/180.)
+#define THETA_TOLERANCE (25*M_PI/180.)
 //reading from the world line file (wld) or from map (png)
 #define READWLD 0
 //reading from the map topic (png) or parameters

@@ -7,6 +7,8 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+find_package(cspacevoroandrea REQUIRED)
+
 find_package(OpenMP)
 if(OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -46,13 +48,16 @@ catkin_package(
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${cspacevoroandrea_INCLUDE_DIRS}
   include
 )
 
 add_library(movingobstaclesrhc src/mainspoj.cpp src/WorkHorse.cpp src/DynamicWindow.cpp src/DStar.cpp src/GridMap.cpp src/Planner.cpp)
 add_executable(spoj src/mainspoj.cpp src/WorkHorse.cpp src/DynamicWindow.cpp src/DStar.cpp src/GridMap.cpp src/Planner.cpp)
+#target_link_libraries(spoj ${catkin_LIBRARIES} ${cspacevoroandrea_LIBRARIES})
 
-target_link_libraries(spoj movingobstaclesrhc ${catkin_LIBRARIES})
+target_link_libraries(spoj movingobstaclesrhc ${catkin_LIBRARIES} ${cspacevoroandrea_LIBRARIES})
+#target_link_libraries(spoj movingobstaclesrhc ${catkin_LIBRARIES})
 
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)

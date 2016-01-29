@@ -488,7 +488,11 @@ void GenericLaserScanFilterNode::movingRobot0Callback(const movingobstaclesrhc::
 	angle_increment=msg->angle_increment;
 	R_point lok;
 	for(int i_LS=0;i_LS<msg->ranges.size();i_LS++){
-                ranges[i_LS]=msg->ranges[i_LS];
+#if LASER_INVERTED
+        ranges[i_LS]=msg->ranges[lasercount-1-i_LS];
+#else
+        ranges[i_LS]=msg->ranges[i_LS];
+#endif
                 //filtering too small laser readings and border readings
 			  lok.th=angle_min+i_LS*angle_increment-sickAngularOffset; //sick2 is rotated for pi/2
 			  if (((lok.th<-112*M_PI/180.)&&(1||ranges[i_LS]<0.5)) || ((lok.th>112*M_PI/180.)&&(1||ranges[i_LS]<0.5)) || (ranges[i_LS]<0.05)) //adapted for sick2 and p3at
@@ -1181,21 +1185,21 @@ if ((F = fopen("gridmapaMap.dat","wt")) != NULL)
 
 #if (RECTANGULAR==0) && 1
 ////pioneer2dx
-	 for (int i=7; i<15; i++){
-	    if (i<8){
-      footprinty[0]=-2.*CELL_DIM;  footprintx[0]=1.2*CELL_DIM;
-      footprinty[1]=-2.*CELL_DIM;  footprintx[1]=-1.2*CELL_DIM;
-      footprinty[2]=-1.2*CELL_DIM;  footprintx[2]=-2.555*CELL_DIM;
-      footprinty[3]=1.2*CELL_DIM;  footprintx[3]=-2.555*CELL_DIM;
-      footprinty[4]=2.*CELL_DIM;  footprintx[4]=-1.2*CELL_DIM;
-      footprinty[5]=2.*CELL_DIM;  footprintx[5]=1.2*CELL_DIM;
-      footprinty[6]=1.2*CELL_DIM;  footprintx[6]=2.555*CELL_DIM;
-      footprinty[7]=-1.2*CELL_DIM;  footprintx[7]=2.555*CELL_DIM;
-      }else{
-      footprintx[i]=footprintx[0];
-      footprinty[i]=footprinty[0];
-      }
-    }
+//	 for (int i=7; i<15; i++){
+//	    if (i<8){
+//      footprinty[0]=-2.*CELL_DIM;  footprintx[0]=1.2*CELL_DIM;
+//      footprinty[1]=-2.*CELL_DIM;  footprintx[1]=-1.2*CELL_DIM;
+//      footprinty[2]=-1.2*CELL_DIM;  footprintx[2]=-2.555*CELL_DIM;
+//      footprinty[3]=1.2*CELL_DIM;  footprintx[3]=-2.555*CELL_DIM;
+//      footprinty[4]=2.*CELL_DIM;  footprintx[4]=-1.2*CELL_DIM;
+//      footprinty[5]=2.*CELL_DIM;  footprintx[5]=1.2*CELL_DIM;
+//      footprinty[6]=1.2*CELL_DIM;  footprintx[6]=2.555*CELL_DIM;
+//      footprinty[7]=-1.2*CELL_DIM;  footprintx[7]=2.555*CELL_DIM;
+//      }else{
+//      footprintx[i]=footprintx[0];
+//      footprinty[i]=footprinty[0];
+//      }
+//    }
 //circular
 //	 for (int i=7; i<15; i++){
 //	    if (i<8){

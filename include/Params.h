@@ -66,7 +66,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //not using laser readings, only static map - 1, 0 is using laser 
 #define NO_LASER 0
 //inverted laser on husky
-#define LASER_INVERTED 0
+#define LASER_INVERTED 1
 
 //width of the robot (acc. y axis)
 #define ROBOT_MASK (ceil(RR/CELL_DIM))

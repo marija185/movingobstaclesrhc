@@ -62,9 +62,9 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //using the goal orientation
 #define THETAGOAL 1
 //not using odometry topic 1 (NO_LASER must be 1), next position is calculated according to the model
-#define IDEAL_MODEL 0
+#define IDEAL_MODEL 1
 //not using laser readings, only static map - 1, 0 is using laser 
-#define NO_LASER 0
+#define NO_LASER 1
 //inverted laser on husky
 #define LASER_INVERTED 0
 
@@ -125,7 +125,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //GABARITI ROBOTA
 //is the robot rectangular shape (1 yes, 0 circular)
 #define RECTANGULAR	0
-#define RR			356.//301.406//260.//560.//356.//paper 156//expbig 456.
+#define RR			256.//301.406//260.//560.//356.//paper 156//expbig 456.
 #define RRY			550.//498.//543.405//840.//598.//paper 798//expbig 698.
 #define GOAL_POSITION_TOLERANCE (CELL_DIM/2.*sqrt(2.))
 #define THETA_TOLERANCE (325*M_PI/180.)//doking

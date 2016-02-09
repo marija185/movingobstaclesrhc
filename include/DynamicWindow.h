@@ -12,9 +12,9 @@
 
 //DIMENZIJE DINAMICKOG PROZORA (ukupno je dimenzija +1)  MORA biti PARAN broj za simetriju!!!
 //(+1)Dimenzija translacijskih brzina dinamickog prozora
-#define V_DIM		4//2			
+#define V_DIM		2//2			
 // (+1)Dimenzija rotacijskih brzina dinamickog prozora
-#define W_DIM		8//2
+#define W_DIM		2//2
 //omnidrive robot
 #define OMNIDRIVE	0
 //(+1)Dimension sideway speed

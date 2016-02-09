@@ -1185,21 +1185,21 @@ if ((F = fopen("gridmapaMap.dat","wt")) != NULL)
 
 #if (RECTANGULAR==0) && 1
 ////pioneer2dx
-//	 for (int i=7; i<15; i++){
-//	    if (i<8){
-//      footprinty[0]=-2.*CELL_DIM;  footprintx[0]=1.2*CELL_DIM;
-//      footprinty[1]=-2.*CELL_DIM;  footprintx[1]=-1.2*CELL_DIM;
-//      footprinty[2]=-1.2*CELL_DIM;  footprintx[2]=-2.555*CELL_DIM;
-//      footprinty[3]=1.2*CELL_DIM;  footprintx[3]=-2.555*CELL_DIM;
-//      footprinty[4]=2.*CELL_DIM;  footprintx[4]=-1.2*CELL_DIM;
-//      footprinty[5]=2.*CELL_DIM;  footprintx[5]=1.2*CELL_DIM;
-//      footprinty[6]=1.2*CELL_DIM;  footprintx[6]=2.555*CELL_DIM;
-//      footprinty[7]=-1.2*CELL_DIM;  footprintx[7]=2.555*CELL_DIM;
-//      }else{
-//      footprintx[i]=footprintx[0];
-//      footprinty[i]=footprinty[0];
-//      }
-//    }
+	 for (int i=7; i<15; i++){
+	    if (i<8){
+      footprinty[0]=-2.*CELL_DIM;  footprintx[0]=1.2*CELL_DIM;
+      footprinty[1]=-2.*CELL_DIM;  footprintx[1]=-1.2*CELL_DIM;
+      footprinty[2]=-1.2*CELL_DIM;  footprintx[2]=-2.555*CELL_DIM;
+      footprinty[3]=1.2*CELL_DIM;  footprintx[3]=-2.555*CELL_DIM;
+      footprinty[4]=2.*CELL_DIM;  footprintx[4]=-1.2*CELL_DIM;
+      footprinty[5]=2.*CELL_DIM;  footprintx[5]=1.2*CELL_DIM;
+      footprinty[6]=1.2*CELL_DIM;  footprintx[6]=2.555*CELL_DIM;
+      footprinty[7]=-1.2*CELL_DIM;  footprintx[7]=2.555*CELL_DIM;
+      }else{
+      footprintx[i]=footprintx[0];
+      footprinty[i]=footprinty[0];
+      }
+    }
 //circular
 //	 for (int i=7; i<15; i++){
 //	    if (i<8){

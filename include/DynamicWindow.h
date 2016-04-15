@@ -12,9 +12,9 @@
 
 //DIMENZIJE DINAMICKOG PROZORA (ukupno je dimenzija +1)  MORA biti PARAN broj za simetriju!!!
 //(+1)Dimenzija translacijskih brzina dinamickog prozora
-#define V_DIM		2//2			
+#define V_DIM		4//2			
 // (+1)Dimenzija rotacijskih brzina dinamickog prozora
-#define W_DIM		2//2
+#define W_DIM		4//2
 //omnidrive robot
 #define OMNIDRIVE	0
 //(+1)Dimension sideway speed
@@ -42,9 +42,13 @@
 //gain of the translational velocity (multiply with rho to see what is contribution of v,vy)
 #define GAINV M_PI*0.1 //M_PI/0.00100
 //objective function (1-sum, 0-last point)
-#define OBJECTIVE_SUM 1
+#define OBJECTIVE_SUM 0
 //conditions for stability 1-all points have cost ge than end point S(i)>=S(T); 0-none; -1- only S(0)>=S(T)
 #define OBJECTIVE_CONDITIONS 0
+//exitcontrol for stability
+#define EXITCONTROL 1
+//nav function tau instead of NF
+#define USE_TAU 1
 //special calculation of cost function at goal
 #define SPECIAL_GOAL_F 0
 //including delay of 3 time steps of p3dx in kin model (3), 1 - old only 1 time step
@@ -91,8 +95,8 @@
 #define SC2   100.
 #define SC_W 0.0
 //TOLERANCIJA BRZINA -  brzinom 0 se smatra i brzina od 5mm/s
-#define V_TOLERANCE  (0.01*DV_MAX)  //3 mm/s u milimetrima
-#define W_TOLERANCE  (0.01*DW_MAX)  //1 deg/s u radijanima (5.*M_PI/180.)
+#define V_TOLERANCE  (0.0000000001*DV_MAX)  //3 mm/s u milimetrima
+#define W_TOLERANCE  (0.0000000001*DW_MAX)  //1 deg/s u radijanima (5.*M_PI/180.)
 //maximal value of the path cost in the criterium
 #define MAXCOST 1000000000.
 
@@ -438,6 +442,8 @@ double  volatile ROBOT_TH;
   bool Fourpointscollide(double x, double y, double th, double vx, double vy, int index);
   double checkDesiredOrientation(double th);
   double computeInterpolatedCost(double x, double y, double th);
+  double computeTau(double x, double y, double th);
+  void cellExitControl(double x, double y, double th, double rbv, double rbvy, double rbw);
   void MinimalniZaustavniPut();
   // Funkcija za proracun kruznog luka
   void Kruzni_luk();

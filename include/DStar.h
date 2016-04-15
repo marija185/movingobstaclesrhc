@@ -42,6 +42,9 @@
 
 #define USEBUCKET 0 //lista 0, ne radi za replaniranje
 
+#define TAU_SEARCH 0 //search D* with weights depending on number of steps needed to turn and translate through the grid
+#define TAU_OPT 0 //minimal number of steps to turn and translate
+
 //smjerovi s obzirom na trenutni cvor (pomaci)                                                                  (-1,1)    (0,1)   (1,1)             5.   6.   7.
 static const int xofs[ 8 ] = { -1,1,0,0, 1, -1, -1, 1 };
 static const int yofs[ 8 ] = { 0,0,1,-1, 1, 1, -1, -1 };
@@ -198,6 +201,9 @@ class DStar{
 	int maxOri;
   BucketPrioQueue<I_point*> queue;
 
+//goal orientation
+  double goal_orientation;
+
 //not important
 	  R_point start_ri;// current real robot position within the cell
 	  I_point prviStart;
@@ -301,6 +307,11 @@ class DStar{
   
   //functions
   int	Init( int start_x, int start_y, int goal_x, int goal_y);//check for start and goal
+  int exitRotation(double w0, double theta, double wmax, double dwmax, double dt);
+  int exitTranslation(double v0, double distance, double vmax, double dvmax, double dt);
+  double exitRotationReal(double w0, double theta, double wmax, double dwmax, double dt);
+  double exitTranslationReal(double v0, double distance, double vmax, double dvmax, double dt);
+  int numCellsFromXtoG(I_point X);
   void arc_cost(int X_cell_x, int X_cell_y, int Y_cell_x, int Y_cell_y); //set global value c
   int   IsValid(int x, int y); //out of map (0), occupied (2), free (1)
   void reset();

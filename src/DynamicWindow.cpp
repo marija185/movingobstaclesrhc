@@ -228,7 +228,7 @@ void DynamicWindow::Sekvenca_izvodjenja(){
 	rbw=RB.w;
 #endif
  //Postavljanje setpointa vektora brzine i azuriranje loggera
-   //ako smo uspijeli nesto odabrati!
+   //ako smo uspjeli nesto odabrati!
 	if((ni>=0)&&(nj>=0)){
 			LogMisc(2);//tu se upisuje KL optimalan
 			SP.setpoint_v=KL.v[1];
@@ -303,7 +303,7 @@ void DynamicWindow::Sekvenca_izvodjenja(){
 			SP.setpoint_th=KL_old.th[1];
 
 			KL_old_temp=KL_old;//spremanje stare optimalne trajektorije
-			ljapunov=cost_old;
+			ljapunov=cost_old; //nepotrebno, vec spremljeno?
 //			for (int i=0; i<N_KL; i++){
 //			printf("KL_old[%d]=(%f,%f,%f,%f,%f,%f)\n",i,KL_old.x[i],KL_old.y[i],KL_old.th[i],KL_old.v[i],KL_old.w[i]*RuS,KL_old.vy[i]);
 //			}
@@ -333,6 +333,24 @@ void DynamicWindow::Sekvenca_izvodjenja(){
 #endif			
 		}
 		}
+//exitcontrol		
+#if (EXITCONTROL)
+		if (T_old<=1){
+		  cellExitControl(SP.setpoint_x, SP.setpoint_y, SP.setpoint_th, rbv, rbvy, rbw); //from the next state, current velocity still moves the robot (RB.x, RB.y, RB.th);
+		  KL_old_temp.v[1]=SP.setpoint_v;
+		  KL_old_temp.vy[1]=SP.setpoint_vy;
+		  KL_old_temp.w[1]=SP.setpoint_w;
+		  for (int i=2; i<N_KL; i++){
+  	    kin_model_evol(&KL_old_temp,i);
+  	    KL_old_temp.S[i]=computeInterpolatedCost(KL_old_temp.x[i],KL_old_temp.y[i],KL_old_temp.th[i]);		  
+		  }
+		  if (ljapunov<KL_old_temp.S[2]){
+		    printf("ljapunov increase for exit control");
+		  }
+	    ljapunov=KL_old_temp.S[2];
+	    printf("desired calculated from kin_model (x,y,th)=(%.15f, %.15f, %.15f)\n", KL_old_temp.x[2], KL_old_temp.y[2], KL_old_temp.th[2]);
+		}
+#endif
 #endif
 
 	}
@@ -1566,8 +1584,274 @@ double DynamicWindow::checkDesiredOrientation(double th){
 }
 
 
-double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
+void DynamicWindow::cellExitControl(double x, double y, double th, double rbv, double rbvy, double rbw){
 
+  double distance_g, t, alfa, delta, signw;
+  R_point C;
+  I_point temp, best, nextbest;
+
+  GM->mapper_point_temp.x=x;
+	GM->mapper_point_temp.y=y;
+
+	if(GM->check_point(GM->mapper_point_temp)) {
+
+    t=th;
+  	while (t>=2*M_PI) t-=2*M_PI;
+  	while (t<0) t+=2*M_PI;
+
+
+  //mid point 
+		temp=GM->cell_point_temp;
+		C.x=temp.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
+		C.y=temp.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
+		best=DS->map[temp.x][temp.y]._next;
+    C_plus.x=best.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
+    C_plus.y=best.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
+    E.x=(C.x+C_plus.x)/2.;
+    E.y=(C.y+C_plus.y)/2.;
+//    if ((x==E.x)||(y==E.y)) //nije dovrseno za spec slucaj kad su tocke na bridu, samo za mid point to treba
+
+#if TAU_SEARCH
+    E=C_plus;
+    if (best.x!=-1){
+      nextbest = DS->map[best.x][best.y]._next;
+      if (nextbest.x == -1){
+        E.th = WH->global_goal_workhorse.th;
+      } else {
+        E.th = atan2((nextbest.y-best.y),(nextbest.x-best.x));      
+      }
+    }      
+#else
+    if (((x==E.x)&&(C_plus.y==C.y))||((y==E.y)&&(C_plus.x==C.x))) //za slucaj kad su tocke na bridu
+    {
+      if (best.x!=-1){
+        nextbest = DS->map[best.x][best.y]._next;
+        if (nextbest.x == -1){
+          E = WH->global_goal_workhorse;
+        } else {
+		      C.x=nextbest.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
+		      C.y=nextbest.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
+          E.x=(C.x+C_plus.x)/2.;
+          E.y=(C.y+C_plus.y)/2.;
+        }
+      }      
+    }
+
+#endif
+
+		if ((naCilju)||(best.x==-1))
+		{
+  //on the goal
+      E = WH->global_goal_workhorse;
+    }
+
+    distance_g = sqrt((E.x-x)*(E.x-x)+(E.y-y)*(E.y-y));
+#if (IDEAL_MODEL==0)
+    if (naCilju){
+      distance_g = 0;
+    }
+#endif    
+         
+    if (fabs(distance_g) > V_TOLERANCE*STEP)
+    {
+      alfa=atan2((E.y-y),(E.x-x));
+      if (alfa<0){
+      	alfa=alfa+2*M_PI;
+      }
+    }else{
+      distance_g = 0;
+      alfa = E.th; 
+    }
+    delta=(alfa-t);
+    while (fabs(delta)>M_PI){
+      if (delta<0){
+        delta+=2*M_PI;
+      } else {
+        delta-=2*M_PI;    
+      }
+    }
+    
+
+    
+    
+    
+    if (fabs(delta)>W_TOLERANCE*STEP)
+    {
+      signw=1;
+      if (delta<0) signw=-1;
+      SP.setpoint_v = 0;
+      SP.setpoint_vy = 0;
+      SP.setpoint_w = signw * std::min(fabs(delta)/STEP, DW_MAX*STEP);
+//      SP.setpoint_w = signw * fabs(delta)/STEP;
+      if (fabs(rbw-SP.setpoint_w)>(DW_MAX*STEP)+W_TOLERANCE) {
+        SP.setpoint_w=rbw-(rbw-SP.setpoint_w)/fabs(rbw-SP.setpoint_w)*DW_MAX*STEP;
+      }
+    }else{
+      SP.setpoint_v = std::min(distance_g/STEP,DV_MAX*STEP);
+//      SP.setpoint_v = distance_g/STEP;
+      SP.setpoint_vy = 0;
+      SP.setpoint_w = 0;
+      if (fabs(rbv-SP.setpoint_v)>(DVX_MAX*STEP)+V_TOLERANCE) {//v_refdin_current
+        SP.setpoint_v=rbv-(rbv-SP.setpoint_v)/fabs(rbv-SP.setpoint_v)*DVX_MAX*STEP;//v_refdin_current
+      }
+    }
+    printf("distance_g=%.15f, delta=%.15f\n", distance_g, delta);
+    printf("(x,y,th,v,w)=(%.15f,%.15f,%.15f,%.15f,%.15f)\n", x, y, th, SP.setpoint_v, SP.setpoint_w);
+    printf("desired orientation = %.15f (%.15f)\n",alfa, alfa-2*M_PI);
+  }
+
+}
+
+#if (USE_TAU==0)
+double DynamicWindow::computeTau(double x, double y, double th){
+#else
+double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
+#endif
+
+  double alfa, delta, tau, tau_up, VDStar, VDStarbest, traversalcostVDStar, traversalcostbest, distance_g, t;
+  double num_turn, num_translate;
+  R_point C;
+  I_point temp, best, nextbest;
+
+  tau = OBSTACLE;
+  GM->mapper_point_temp.x=x;
+	GM->mapper_point_temp.y=y;
+
+	if(GM->check_point(GM->mapper_point_temp)) {
+
+    t=th;
+  	while (t>=2*M_PI) t-=2*M_PI;
+  	while (t<0) t+=2*M_PI;
+
+
+  //mid point 
+		temp=GM->cell_point_temp;
+		VDStar=DS->map[temp.x][temp.y].h_cost_int;
+		VDStarbest=VDStar;
+		traversalcostVDStar=DS->map[temp.x][temp.y].traversal_cost;
+		C.x=temp.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
+		C.y=temp.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
+		best=DS->map[temp.x][temp.y]._next;
+    C_plus.x=best.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
+    C_plus.y=best.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
+    E.x=(C.x+C_plus.x)/2.;
+    E.y=(C.y+C_plus.y)/2.;
+
+#if TAU_SEARCH
+    E=C_plus;
+    if (best.x!=-1){
+      nextbest = DS->map[best.x][best.y]._next;
+      VDStarbest = DS->map[best.x][best.y].h_cost_int;
+      if (nextbest.x == -1){
+        E.th = WH->global_goal_workhorse.th;
+      } else {
+        E.th = atan2((nextbest.y-best.y),(nextbest.x-best.x));      
+      }
+    }      
+#else
+    if (((x==E.x)&&(C_plus.y==C.y))||((y==E.y)&&(C_plus.x==C.x))) //za slucaj kad su tocke na bridu
+    {
+      if (best.x!=-1){
+        nextbest = DS->map[best.x][best.y]._next;
+        if (nextbest.x == -1){
+          E = WH->global_goal_workhorse;
+        } else {
+		      C.x=nextbest.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
+		      C.y=nextbest.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
+          E.x=(C.x+C_plus.x)/2.;
+          E.y=(C.y+C_plus.y)/2.;
+        }
+      }      
+    }
+
+#endif
+
+		if ((naCilju)||(best.x==-1))
+		{
+  //on the goal
+      E = WH->global_goal_workhorse;
+      traversalcostbest = traversalcostVDStar;
+    }else{
+      traversalcostbest=DS->map[best.x][best.y].traversal_cost;
+    }
+
+    distance_g = sqrt((E.x-x)*(E.x-x)+(E.y-y)*(E.y-y));
+#if (IDEAL_MODEL==0)
+    if (naCilju){
+      distance_g = 0;
+    }
+#endif    
+       
+    if (fabs(distance_g) > V_TOLERANCE*STEP){
+      alfa=atan2((E.y-y),(E.x-x));
+      if (alfa<0){
+      	alfa=alfa+2*M_PI;
+      }
+    }else{//at goal
+      distance_g = 0;
+      alfa = E.th;
+    }
+    if (rotateongoal){
+      alfa = WH->global_goal_workhorse.th;
+      distance_g = 0;
+    }
+    delta=fabs(t-alfa);
+    while (delta>M_PI){
+      delta=fabs(delta-2*M_PI);
+    }
+    if (fabs(delta)<W_TOLERANCE*STEP) delta=0;
+#if TAU_SEARCH
+    tau_up = VDStarbest/COSTSTRAIGHT;
+#else    
+    VDStar = DS->numCellsFromXtoG(temp)*COSTSTRAIGHT;
+    tau_up = (VDStar/COSTSTRAIGHT + traversalcostVDStar)*ceil(M_PI/(DW_MAX*STEP*STEP)) + VDStar/COSTSTRAIGHT*ceil(sqrt(5)/2*CELL_DIM/(DV_MAX*STEP*STEP)); 
+//    tau_up = 0;
+#endif
+    if ((distance_g == 0) || (rotateongoal))
+    {
+      tau_up = 0;
+    }
+#if TAU_OPT && 1
+    num_turn=DS->exitRotationReal(0, delta, W_MAX, DW_MAX*STEP, STEP);
+    num_translate=DS->exitTranslationReal(0, distance_g, V_MAX, DV_MAX*STEP, STEP);
+    tau = num_turn + num_translate + tau_up;
+#else
+    tau = (delta/(DW_MAX*STEP*STEP) + distance_g/(DV_MAX*STEP*STEP)) + tau_up;
+#endif
+#if TAU_SEARCH
+    delta=fabs(E.th-alfa);
+    while (delta>M_PI){
+      delta=fabs(delta-2*M_PI);
+    }
+    if (fabs(delta)<W_TOLERANCE*STEP) delta=0;
+#if TAU_OPT && 1
+    num_turn = DS->exitRotationReal(0, delta, W_MAX, DW_MAX*STEP, STEP);
+    tau = tau + num_turn;
+#else    
+    tau = tau + delta/(DW_MAX*STEP*STEP);
+#endif
+#endif
+//    tau = distance_g/(DV_MAX*STEP*STEP) + tau_up;
+//    tau = num_translate + tau_up;
+//    tau = num_turn + tau_up;
+//    tau = tau_up;
+//    tau = delta/(DW_MAX*STEP*STEP) + tau_up;
+//    tau = VDStar/COSTSTRAIGHT;
+//    tau = delta/(DW_MAX*STEP*STEP);
+//    tau = distance_g/(DV_MAX*STEP*STEP)*traversalcostVDStar;
+//    cellExitControl(x,y,th);
+//    tau=SP.setpoint_w;
+  }
+  
+  return tau;
+}
+
+
+#if (USE_TAU==0)
+double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
+#else
+double DynamicWindow::computeTau(double x, double y, double th){
+#endif
 	I_point temp,best,succ,A1cell, A2cell;
 	R_point C, A, A1, A2, M1, M2, M3, M4;
 	double VDStar,t,t1,t2, distance_temp, distance_tempUpOri, VDStarUpOri;
@@ -2760,7 +3044,8 @@ void DynamicWindow::kin_model_evol(MB_KL *KLa, int i)
 		KLa->y[i]=KLa->y[i-1]+ (v*sin(KLa->th[i-1]) + vy*cos(KLa->th[i-1]))*STEP;
 		KLa->th[i]=KLa->th[i-1]+w*STEP;
 #else
-			if(fabs(w)>W_TOLERANCE){
+			if(fabs(w)>0)//W_TOLERANCE)
+			{
 				KLa->th[i]=KLa->th[i-1]+w*STEP;
 				KLa->x[i]=KLa->x[i-1]+v/w*(sin(KLa->th[i])-sin(KLa->th[i-1]));
 				KLa->y[i]=KLa->y[i-1]-v/w*(cos(KLa->th[i])-cos(KLa->th[i-1]));
@@ -2918,7 +3203,7 @@ void DynamicWindow::Kruzni_luk_sa_zaustavljanjem(){
 		}
 	}
 	bez_kracenja=1;//1 ako ne kratimo trajektorije da ne udaraju u prepreku, 0-kratimo
-	provjeraluka=0;//1 ako provjeravamo sijece li luk prepreku, 0 ako ne (staro)
+	provjeraluka=1;//1 ako provjeravamo sijece li luk prepreku, 0 ako ne (staro)
 	usecostmask=0; //1 ako smatramo sudarom vece vrijednosti costmaske da bi usporili robota
 	ellipse=ELLIPSE;//ako zamucujemo svaku tocku za provjeru sudara
 	int checkdiag=0; //provjeru ogranicenja za debug
@@ -6206,8 +6491,8 @@ double DynamicWindow::Old_traj(){
 				printf("T_old=%d, locmincnt=%d\n",i,locmincnt);
 				T_old=i;
 				if (T_old==0){
-				  locmincnt++;
 				  T_old=locmincnt;
+				  locmincnt++;
 				}else{
 				  locmincnt=0;
 				}
@@ -7249,10 +7534,23 @@ void DynamicWindow::Path_minimum(){
   		best_breakage=true;
   		ni=-1;nj=-1;nk=-1;
 		}else{
-		printf("ni=%d, nj=%d, nk=%d, temp_v=%f, sqrt(vx^2+vy^2)=%f, plus=%d, plus1=%d, plus2=%d, minus=%d, minus2=%d min_A=%.15f, cost_breakage=%.15f, ljapunov=%.15f\n",ni,nj,nk, temp_v, sqrt(TB.v[ni]*TB.v[ni]+TB.vy[nk]*TB.vy[nk]),plus,plus1,plus2,minus,minus2, min_A, cost_breakage, ljapunov);
- 		if (plus2){
- 			printf("stani\n");
- 		}
+//delta J for exitcontrol
+#if (EXITCONTROL)
+    double deltaJ=0.;
+    if ((flag_kl_old) && (cost_old-ljapunov<deltaJ)){
+      ni=-1;nj=-1;nk=-1;
+			ljapunov=cost_old;
+			best_old=true;
+			printf("choosing old traj: cost of the old trajectory %.15f is for less than %f larger than the best trajectory %.15f\n", cost_old, deltaJ, min_A);
+    }else
+#endif
+    {
+		  printf("ni=%d, nj=%d, nk=%d, temp_v=%f, sqrt(vx^2+vy^2)=%f, plus=%d, plus1=%d, plus2=%d, minus=%d, minus2=%d min_A=%.15f, cost_breakage=%.15f, ljapunov=%.15f\n",ni,nj,nk, temp_v, sqrt(TB.v[ni]*TB.v[ni]+TB.vy[nk]*TB.vy[nk]),plus,plus1,plus2,minus,minus2, min_A, cost_breakage, ljapunov);
+   		if (plus2){
+   			printf("stani\n");
+   		}
+    
+    }	
  		}
  		}
 	}

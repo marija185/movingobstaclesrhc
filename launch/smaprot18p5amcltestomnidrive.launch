@@ -15,7 +15,7 @@
 
 <include file="$(find movingobstaclesrhc)/launch/fake_corridor.launch" />
 
-<!-- running the navigation -->
+<!-- running the navigation 
     <node name="spoj" pkg="movingobstaclesrhc" type="spoj">
         <param name="base_frame" value="base_link" />
         <param name="odom_topic" value="/odom" />
@@ -28,7 +28,7 @@
         <param name="w_min" type="double" value="-100." />
         <param name="w_max" type="double" value="100." />
         <param name="dw_max" type="double" value="100." />
-    </node>
+    </node>-->
     
 
 

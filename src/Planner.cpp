@@ -419,6 +419,7 @@ if (DS->prviput==2) tg=WH->RB.th;
     flag_debug=DS->InitOri(start_i, global_goal_i);
 #else
    flag_debug=DS->Init(start_i.x, start_i.y, global_goal_i.x, global_goal_i.y);
+   DS->goal_orientation=global_goal_r.th;
 #endif
     if(flag_debug==0){
       printf("Planner> DStar has wrong map borders!\n");
@@ -1736,9 +1737,13 @@ if (i<pathori->size()-1){
 //	      double xlow=5800., xhigh=6100., ylow=2900., yhigh=3200., thlow=45., thhigh=215.; 
 //	      double xlow=6300., xhigh=6600., ylow=3700., yhigh=4000., thlow=65., thhigh=215.; //simetrija
 //	      double xlow=5500., xhigh=5800., ylow=1200., yhigh=1500., thlow=270., thhigh=90.; 
-	      double xlow=0., xhigh=GM->Map_Dim_X_A, ylow=0., yhigh=GM->Map_Dim_Y_A, thlow=0., thhigh=0.;
-//	      double xlow=5500., xhigh=5800., ylow=4200., yhigh=4500., thlow=50., thhigh=130.;
-	      int numx=100, numy=100, numth=1;
+//	      double xlow=0., xhigh=GM->Map_Dim_X_A, ylow=0., yhigh=GM->Map_Dim_Y_A, thlow=0., thhigh=0.;
+//	      double xlow=3300., xhigh=3600., ylow=3300., yhigh=3600., thlow=0., thhigh=90.; //smap
+	      double xlow=1300., xhigh=1600., ylow=2300., yhigh=2600., thlow=0., thhigh=90.; //smap
+//	      double xlow=900., xhigh=1200., ylow=7700., yhigh=8000., thlow=-90., thhigh=90.;//corridor goal
+//	      double xlow=5500., xhigh=5800., ylow=3200., yhigh=3500., thlow=0., thhigh=100.;//corridor entrance passage
+//	      double xlow=9100., xhigh=9400., ylow=1400., yhigh=1700., thlow=90., thhigh=190.;//corridor start
+	      int numx=100, numy=100, numth=100;
 	      FILE *logfilex, *logfiley, *logfileth, *logfileS;
         if ( (logfilex = fopen("logger//interpolatedx","wt")) == NULL || (logfiley = fopen("logger//interpolatedy","wt")) == NULL || (logfileth = fopen("logger//interpolatedth","wt")) == NULL || (logfileS = fopen("logger//interpolatedS","wt")) == NULL){
 	 	      printf("Error! file couldn't be opened.");
@@ -1753,7 +1758,9 @@ if (i<pathori->size()-1){
 	            x=ix/((double)(numx))*(xhigh-xlow)+xlow;
 	            y=iy/((double)(numy))*(yhigh-ylow)+ylow;
               S=DW->computeInterpolatedCost(x,y,th);
-              if (S<OBSTACLE){
+//              printf("S = %f ",S);
+//              S=DW->computeTau(x,y,th);
+              if (S<OBSTACLE/COSTSTRAIGHT){
                 fprintf(logfile,"%f %f %f %f\n",x,y,th,S);
                 
 	            }else{
@@ -1938,6 +1945,30 @@ void Planner::Puni(int i, int j, int star_size_x, int star_size_y, int robot_mas
 	int index_x, index_y, cost;//i cost maska
 	I_point temp;
 	DStarCell **star_map=DS->GetMap();
+	  //dodavanje ekstra prepreka
+#if 0
+  star_map[13][24].prepreka_bool=true;
+  star_map[13][24].traversal_cost=OBSTACLE;
+  star_map[14][24].prepreka_bool=true;
+  star_map[14][24].traversal_cost=OBSTACLE;
+  star_map[14][26].prepreka_bool=true;
+  star_map[14][26].traversal_cost=OBSTACLE;
+  star_map[15][26].prepreka_bool=true;
+  star_map[15][26].traversal_cost=OBSTACLE;
+  for(int i=0; i<7; i++){
+    star_map[12][22+i].prepreka_bool=true;
+    star_map[12][22+i].traversal_cost=OBSTACLE;
+    star_map[16][22+i].prepreka_bool=true;
+    star_map[16][22+i].traversal_cost=OBSTACLE;
+  }
+  for(int i=0; i<3; i++){
+    star_map[13+i][22].prepreka_bool=true;
+    star_map[13+i][22].traversal_cost=OBSTACLE;
+    star_map[13+i][28].prepreka_bool=true;
+    star_map[13+i][28].traversal_cost=OBSTACLE;
+  }
+#endif
+
 	if (!((star_map[i][j].prepreka_bool==true)&&(star_map[i][j]._maska.x==i)&&(star_map[i][j]._maska.y==j))) {//ako to nije znaci da je oko ove prepreke vec radjena maska prepreke
 		star_map[i][j]._maska.x=i;
 		star_map[i][j]._maska.y=j;//ova je glavna

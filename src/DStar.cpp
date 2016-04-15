@@ -1504,7 +1504,7 @@ void DStar::processState() {
 	// RAISE STANJE
 	if (k_val < h_val)//tu najbolji nije prepreka
 	{
-		//printf("raise");
+		printf("raise\n");
 #ifdef DSTAR_EIGHT_CONNECTED 
 		for ( int d = 0; d < 8; d++ ) //for all neighbors
 #else
@@ -1626,7 +1626,7 @@ void DStar::processState() {
 			map[point.x][point.y]._next.x = MinCostElemLista.x;
 					map[point.x][point.y]._next.y = MinCostElemLista.y;
 					insertNode(point, h_val + c*travCost[d]);
-					//printf("opet raise obradjen");
+					printf("opet raise obradjen\n");
 		}
 		else
         {
@@ -1634,7 +1634,7 @@ void DStar::processState() {
 		 {
 
 			 insertNode(MinCostElemLista, h_val);
-	    //printf("opet raise obradjen");
+	    printf("opet raise obradjen\n");
 		 }
 		else
         {
@@ -1643,7 +1643,7 @@ void DStar::processState() {
               {
 
 		      insertNode(point, h_point);
-
+          printf("opet raise obradjen\n");
 	      }
           }
 			  } //else
@@ -2147,6 +2147,463 @@ void    DStar::insertNodeReverse( I_point element, int h_new )
 #endif
 }
 
+//determing the real time for turn and translation
+double DStar::exitRotationReal(double w0, double theta, double wmax, double dwmax, double dt){
+  
+  double min_num_steps=10000., num_steps;
+  int Nu, Nd;
+  double theta_plus, theta_minus, fiu, fid, fiu_, N1, N2, N, Ns;
+  bool maxspeed;
+
+  if (theta>0 && theta<=2*M_PI){
+      theta_plus=theta;
+      theta_minus=theta-2*M_PI;
+  }else if (theta<=0 && theta>=-2*M_PI){
+      theta_plus=theta+2*M_PI;
+      theta_minus=theta;
+  }
+
+//theta_plus
+  Nu=ceil((wmax-w0)/dwmax);
+  Nd=ceil(wmax/dwmax);
+
+  fiu=(Nu+1)/2.*(w0+wmax)*dt;
+  fid=(Nd+1)/2.*(wmax)*dt;
+
+  if ((theta_plus-fiu-fid)>0){
+      maxspeed=true;
+  }else {
+      maxspeed=false;
+  }
+
+  if (maxspeed) {
+      Ns=((theta_plus-fiu-fid)/(wmax*dt));
+      num_steps=Nu+Ns+Nd+1;
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+  if (!maxspeed){
+      Nd=ceil(fabs(w0)/dwmax);
+      fid=(Nd+1)/2.*w0*dt;
+      fiu_=theta_plus-fid;
+      if (fiu_>0) {
+          if (w0<0) {
+              N1=sqrt(fiu_/dt/dwmax);
+              N2=-N1;
+          } else {
+              N1=(-2*w0+sqrt(4*w0*w0+4*dwmax*(fiu_)/dt))/(2*dwmax);
+              N2=(-2*w0-sqrt(4*w0*w0+4*dwmax*(fiu_)/dt))/(2*dwmax);
+          }
+      } else {
+          N1=sqrt(fiu_/dt/(-dwmax));
+          N2=-N1;
+      }
+
+      if (std::min(N1,N2)<0){
+          N=std::max(N1,N2);
+      } else {
+          N=std::min(N1,N2);
+      }
+
+      num_steps=N+N-1+Nd+1;
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+// theta_minus (opposite direction)
+  Nu=ceil(fabs(-wmax-w0)/dwmax);
+  Nd=ceil(wmax/dwmax);
+
+  fiu=(Nu+1)/2.*(w0-wmax)*dt;
+  fid=(Nd+1)/2.*(-wmax)*dt;
+
+  if ((theta_minus-fiu-fid)<0){
+      maxspeed=true;
+  }else {
+      maxspeed=false;
+  }
+
+  if (maxspeed) {
+      Ns=((theta_minus-fiu-fid)/(-wmax*dt));
+      num_steps=Nu+Ns+Nd+1;
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+  if (!maxspeed){
+      Nd=ceil(fabs(w0)/dwmax);
+      fid=(Nd+1)/2.*w0*dt;
+      fiu_=theta_minus-fid;
+      if (fiu_<0) {
+          if (w0>0) {
+              N1=sqrt(fiu_/dt/(-dwmax));
+              N2=-N1;
+          } else {
+              N1=(2*w0-sqrt(4*w0*w0-4*dwmax*(fiu_)/dt))/(2*dwmax);
+              N2=(2*w0+sqrt(4*w0*w0-4*dwmax*(fiu_)/dt))/(2*dwmax);
+          }
+      } else {
+          N1=sqrt(fiu_/dt/(dwmax));
+          N2=-N1;
+      }
+
+      if (std::min(N1,N2)<0){
+          N=std::max(N1,N2);
+      } else {
+          N=std::min(N1,N2);
+      }
+
+      num_steps=N+N-1+Nd+1;
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+  return min_num_steps;
+}
+
+double DStar::exitTranslationReal(double v0, double distance, double vmax, double dvmax, double dt){
+
+  double min_num_steps=10000., num_steps;
+  int Nu, Nd;
+  double fiu, fid, fiu_, N, N1, N2, Ns;
+  bool maxspeed;
+
+  Nu=ceil((vmax-v0)/dvmax);
+  Nd=ceil(vmax/dvmax);
+
+  fiu=(Nu+1)/2.*(v0+vmax)*dt;
+  fid=(Nd+1)/2.*(vmax)*dt;
+
+  if ((distance-fiu-fid)>0){
+      maxspeed=true;
+  }else {
+      maxspeed=false;
+  }
+
+  if (maxspeed) {
+      Ns=((distance-fiu-fid)/(vmax*dt));
+      num_steps=Nu+Ns+Nd+1;
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+  if (!maxspeed){
+      Nd=ceil(v0/dvmax);
+      fid=(Nd+1)/2.*v0*dt;
+      fiu_=distance-fid;
+      if (fiu_>0) {
+          N1=(-2*v0+sqrt(4*v0*v0+4*dvmax*(fiu_)/dt))/(2*dvmax);
+          N2=(-2*v0-sqrt(4*v0*v0+4*dvmax*(fiu_)/dt))/(2*dvmax);
+      } else {
+          N1=0;
+          N2=-N1;
+      }
+
+      if (std::min(N1,N2)<0){
+          N=std::max(N1,N2);
+      } else {
+          N=std::min(N1,N2);
+      }
+
+      num_steps=N+N-1+Nd+1;
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+  return min_num_steps;
+
+}
+
+//determing the number of steps (discrete time) for turn and translation
+int DStar::exitRotation(double w0, double theta, double wmax, double dwmax, double dt){
+  
+  int min_num_steps=10000, num_steps;
+  int Nu, Nd, Ns;
+  double theta_plus, theta_minus, fiu, fid, fis, fid_, fiu_, w1, N1, N2, N;
+  bool maxspeed;
+
+  if (theta>0 && theta<=2*M_PI){
+      theta_plus=theta;
+      theta_minus=theta-2*M_PI;
+  }else if (theta<=0 && theta>=-2*M_PI){
+      theta_plus=theta+2*M_PI;
+      theta_minus=theta;
+  }
+
+//theta_plus
+  Nu=ceil((wmax-w0)/dwmax);
+  Nd=ceil(wmax/dwmax);
+
+  fiu=(Nu+1)/2.*(w0+wmax)*dt;
+  fid=(Nd+1)/2.*(wmax)*dt;
+
+  if ((theta_plus-fiu-fid)>0){
+      maxspeed=true;
+  }else {
+      maxspeed=false;
+  }
+
+  if (maxspeed) {
+      Ns=floor((theta_plus-fiu-fid)/(wmax*dt));
+      fis=Ns*wmax*dt;
+      fid_=theta_plus-fiu-fis;
+      w1=(fid_-fid)/dt;
+      if (w1==0){
+          num_steps=Nu+Ns+Nd+1;
+      } else {
+          num_steps=Nu+Ns+Nd+1+1;
+      }
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+  if (!maxspeed){
+      Nd=ceil(fabs(w0)/dwmax);
+      fid=(Nd+1)/2.*w0*dt;
+      fiu_=theta_plus-fid;
+      if (fiu_>0) {
+          if (w0<0) {
+              N1=sqrt(fiu_/dt/dwmax);
+              N2=-N1;
+          } else {
+              N1=(-2*w0+sqrt(4*w0*w0+4*dwmax*(fiu_)/dt))/(2*dwmax);
+              N2=(-2*w0-sqrt(4*w0*w0+4*dwmax*(fiu_)/dt))/(2*dwmax);
+          }
+      } else {
+          N1=sqrt(fiu_/dt/(-dwmax));
+          N2=-N1;
+      }
+
+      if (std::min(N1,N2)<0){
+          N=std::max(N1,N2);
+      } else {
+          N=std::min(N1,N2);
+      }
+
+      Nu=floor(N);
+      if (w0<0) {
+          fiu=(Nu*Nu*dwmax)*dt;
+      } else {
+          fiu=(Nu*Nu*dwmax+2*Nu*w0)*dt;
+      }
+      if (fiu_<0) {
+          fiu=-Nu*Nu*dwmax*dt;
+      }
+      w1=(fiu_-fiu)/dt;
+      if (w1==0) {
+          num_steps=Nu+Nu-1+Nd+1;
+      } else {
+          num_steps=Nu+Nu-1+Nd+1+1;
+      }
+      if ((w0<0 && w1>(Nu)*dwmax) || (w0>=0 && w1>(Nu)*dwmax+w0) || (w0>0 && w1<(-1)*(Nu)*dwmax)) {
+          num_steps += 1;
+      }
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+// theta_minus (opposite direction)
+  Nu=ceil(fabs(-wmax-w0)/dwmax);
+  Nd=ceil(wmax/dwmax);
+
+  fiu=(Nu+1)/2.*(w0-wmax)*dt;
+  fid=(Nd+1)/2.*(-wmax)*dt;
+
+  if ((theta_minus-fiu-fid)<0){
+      maxspeed=true;
+  }else {
+      maxspeed=false;
+  }
+
+  if (maxspeed) {
+      Ns=floor((theta_minus-fiu-fid)/(-wmax*dt));
+      fis=Ns*wmax*dt*(-1);
+      fid_=theta_minus-fiu-fis;
+      w1=(fid_-fid)/dt;
+      if (w1==0){
+          num_steps=Nu+Ns+Nd+1;
+      } else {
+          num_steps=Nu+Ns+Nd+1+1;
+      }
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+  if (!maxspeed){
+      Nd=ceil(fabs(w0)/dwmax);
+      fid=(Nd+1)/2.*w0*dt;
+      fiu_=theta_minus-fid;
+      if (fiu_<0) {
+          if (w0>0) {
+              N1=sqrt(fiu_/dt/(-dwmax));
+              N2=-N1;
+          } else {
+              N1=(2*w0-sqrt(4*w0*w0-4*dwmax*(fiu_)/dt))/(2*dwmax);
+              N2=(2*w0+sqrt(4*w0*w0-4*dwmax*(fiu_)/dt))/(2*dwmax);
+          }
+      } else {
+          N1=sqrt(fiu_/dt/(dwmax));
+          N2=-N1;
+      }
+
+      if (std::min(N1,N2)<0){
+          N=std::max(N1,N2);
+      } else {
+          N=std::min(N1,N2);
+      }
+
+      Nu=floor(N);
+      if (w0>0) {
+          fiu=(-Nu*Nu*dwmax)*dt;
+      } else {
+          fiu=(-Nu*Nu*dwmax+2*Nu*w0)*dt;
+      }
+      if (fiu_>0) {
+          fiu=Nu*Nu*dwmax*dt;
+      }
+      w1=(fiu_-fiu)/dt;
+      if (w1==0) {
+          num_steps=Nu+Nu-1+Nd+1;
+      } else {
+          num_steps=Nu+Nu-1+Nd+1+1;
+      }
+      if ((w0>0 && w1<(-Nu)*dwmax) || (w0<=0 && w1<(-Nu)*dwmax+w0) || (w0<0 && w1>Nu*dwmax)) {
+          num_steps += 1;
+      }
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+  return min_num_steps;
+}
+
+int DStar::exitTranslation(double v0, double distance, double vmax, double dvmax, double dt){
+
+  int min_num_steps=10000, num_steps;
+  int Nu, Nd, Ns;
+  double fiu, fid, fis, fid_, fiu_, v1, N, N1, N2;
+  bool maxspeed;
+
+  Nu=ceil((vmax-v0)/dvmax);
+  Nd=ceil(vmax/dvmax);
+
+  fiu=(Nu+1)/2.*(v0+vmax)*dt;
+  fid=(Nd+1)/2.*(vmax)*dt;
+
+  if ((distance-fiu-fid)>0){
+      maxspeed=true;
+  }else {
+      maxspeed=false;
+  }
+
+  if (maxspeed) {
+      Ns=floor((distance-fiu-fid)/(vmax*dt));
+      fis=Ns*vmax*dt;
+      fid_=distance-fiu-fis;
+      v1=(fid_-fid)/dt;
+      if (v1<=0){
+          num_steps=Nu+Ns+Nd+1;
+      } else {
+          num_steps=Nu+Ns+Nd+1+1;
+      }
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+  if (!maxspeed){
+      Nd=ceil(v0/dvmax);
+      fid=(Nd+1)/2.*v0*dt;
+      fiu_=distance-fid;
+      if (fiu_>0) {
+          N1=(-2*v0+sqrt(4*v0*v0+4*dvmax*(fiu_)/dt))/(2*dvmax);
+          N2=(-2*v0-sqrt(4*v0*v0+4*dvmax*(fiu_)/dt))/(2*dvmax);
+      } else {
+          N1=0;
+          N2=-N1;
+      }
+
+      if (std::min(N1,N2)<0){
+          N=std::max(N1,N2);
+      } else {
+          N=std::min(N1,N2);
+      }
+
+      Nu=floor(N);
+      fiu=(Nu*Nu*dvmax+2*Nu*v0)*dt;
+      v1=(fiu_-fiu)/dt;
+      if (v1<=0) {
+          num_steps=Nu+Nu-1+Nd+1;
+      } else {
+          num_steps=Nu+Nu-1+Nd+1+1;
+      }
+      if (v0>=0 && v1>(Nu)*dvmax+v0) {
+          num_steps += 1;
+      }
+      if (num_steps<min_num_steps){
+          min_num_steps=num_steps;
+      }
+  }
+
+  return min_num_steps;
+
+}
+
+int DStar::numCellsFromXtoG(I_point X){
+
+  int length=0;
+  int loopdet=0;
+  I_point temp1=X, temp2;
+  I_point findloop[10];
+  while((temp1.x!=Goal.x)||(temp1.y!=Goal.y))
+  {
+	  if ( IsValid( temp1.x, temp1.y )!=1 )
+	  {
+		  printf("DStar> out of map or obstacle!!! temp1.x=%d, temp1.y=%d, Start.x=%d, Start.y=%d\n", temp1.x,temp1.y,Start.x,Start.y);
+		  printf("DStar> Map dimensions: MapSizeX=%d, MapSizeY=%d\n", MapSizeX, MapSizeY);
+		  break;
+	  }
+	  else
+	  {
+		  temp2.x=map[temp1.x][temp1.y]._next.x;
+		  temp2.y=map[temp1.x][temp1.y]._next.y;
+		  if ((temp2.x==-1)||(temp2.y==-1)) {
+			  printf("no next\n");
+			  break;
+		  }
+		  findloop[(length % 10)].x=temp1.x;
+		  findloop[(length % 10)].y=temp1.y;
+		  for (int i=0;i<std::min(length,10);i++){
+			  if ((temp2.x==findloop[i].x)&&(temp2.y==findloop[i].y)){
+				  printf("loop in the path! path length %d, temp2 = (%d,%d)\n",length, temp2.x, temp2.y);
+				  loopdet=1;
+				  break;
+			  }
+		  }
+		  if (loopdet==1)
+			  break;
+		  temp1.x=temp2.x;
+		  temp1.y=temp2.y;
+		  length++;
+		  if (length>MapSizeX*MapSizeY)
+		  {
+			  printf("loop! time_stamp_counter=%d\n",time_stamp_counter);
+			  break;
+		  }
+	  }
+  }
+  return length;
+}
+
 //POSTAVLJANJE COSTOVA PRIJELAZA IZ STANJA Y U X
       //zadnja verzija---c(x,y)=c(y,x) i to veci broj uvijek gledano iz cost mape
 void DStar::arc_cost(int X_cell_x, int X_cell_y, int Y_cell_x, int Y_cell_y)
@@ -2159,6 +2616,75 @@ void DStar::arc_cost(int X_cell_x, int X_cell_y, int Y_cell_x, int Y_cell_y)
 #if NO_COSTMASK
 	if (c<OBSTACLE)
 		c=EMPTYC;
+#endif
+#if TAU_SEARCH
+  double translation, rotation, angle_next, angle_XY, delta;
+  int num_turn, num_translate;
+  I_point next_cell;
+  translation = ((X_cell_x-Y_cell_x)*(X_cell_x-Y_cell_x) + (X_cell_y-Y_cell_y)*(X_cell_y-Y_cell_y));
+  if (translation != 1){
+    translation = sqrt(translation);
+  }
+  next_cell = map[ X_cell_x ][ X_cell_y ]._next;
+  if ((next_cell.x != -1) || (next_cell.y != -1)){
+    if (next_cell.y==X_cell_y){
+      if (next_cell.x-X_cell_x < 0){
+        angle_next = M_PI;
+      }else{
+        angle_next = 0;
+      }
+    }else if (next_cell.x==X_cell_x){
+      if (next_cell.y-X_cell_y < 0){
+        angle_next = -M_PI/2.;
+      }else{
+        angle_next = M_PI/2.;
+      }
+    }
+    if (angle_next != atan2((next_cell.y-X_cell_y),(next_cell.x-X_cell_x))){
+      printf("angle_next = %f\n", angle_next);
+    }
+  }else{
+    angle_next = goal_orientation;
+  }
+  if (Y_cell_y==X_cell_y){
+    if (X_cell_x-Y_cell_x < 0){
+      angle_XY = M_PI;
+    }else{
+      angle_XY = 0;
+    }
+  }else if (Y_cell_x==X_cell_x){
+    if (X_cell_y-Y_cell_y < 0){
+      angle_XY = -M_PI/2.;
+    }else{
+      angle_XY = M_PI/2.;
+    }
+  }
+  if (angle_XY != atan2((X_cell_y-Y_cell_y),(X_cell_x-Y_cell_x))){
+    printf("angle_XY = %f\n", angle_XY);
+  }
+  delta=fabs(angle_XY-angle_next);
+  while (delta>M_PI){
+    delta=fabs(delta-2*M_PI);
+  }
+  if (delta<0.000001 && delta!=0){
+    printf("delta=%f\n", delta*180/M_PI);
+  }
+#if TAU_OPT
+  num_turn=exitRotation(0, delta, W_MAX, DW_MAX*STEP, STEP);
+  num_translate=exitTranslation(0, translation*CELL_DIM, V_MAX, DV_MAX*STEP, STEP);
+//  printf("num_turn=%d, num_translate=%d, c=%d\n", num_turn, num_translate, c);
+  if (c<OBSTACLE){
+    c = c * (num_turn + num_translate);
+  }
+//  printf("c=%d\n", c);
+#else  
+  translation = ceil(translation*CELL_DIM/STEP/STEP/DV_MAX);
+  rotation = ceil(delta/STEP/STEP/DW_MAX);
+  if (c<OBSTACLE){
+    c = c* (int) (translation + rotation);
+  }
+//  printf("translation=%f, rotation=%f, c=%d\n", translation, rotation, c);
+#endif
 #endif
 }
 

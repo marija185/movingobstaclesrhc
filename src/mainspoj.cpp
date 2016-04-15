@@ -652,9 +652,9 @@ void moj::executeMotion(){
     if (ciklus>10){
 #if (IDEAL_MODEL==1)
 		if (ciklus==11){//samo prvi ciklus uzimamo ocitanja, ostalo iz DW na kraju petlje
-		RB.x=tfx*metric;//1320.;//6400.;//9340.;//6460.;//6401.;//5499.;//800.;//12650.;//1250.;//1950.;//2250.;//500.;//
-		  RB.y=tfy*metric;//2310.;//3100.;//1504.;//3100.;//1400.;//3801.;//5900.;//1300.;//16400.;//5300.;//1000.;
-		  RB.th=yaw;//M_PI*7/8.;//-M_PI/2.-0.008;//M_PI/7.-M_PI/2.-0.008;//M_PI/2.+0.1;//-M_PI/2.0;//1.135;3.7977;//1.57;//3.14;//  //radijani
+		RB.x=tfx*metric;//1350.;//tfx*metric;//1320.;//6400.;//9340.;//6460.;//6401.;//5499.;//800.;//12650.;//1250.;//1950.;//2250.;//500.;//
+		  RB.y=tfy*metric;//2350.;//tfy*metric;//2310.;//3100.;//1504.;//3100.;//1400.;//3801.;//5900.;//1300.;//16400.;//5300.;//1000.;
+		  RB.th=yaw;//-M_PI/2.;//yaw;//M_PI*7/8.;//-M_PI/2.-0.008;//M_PI/7.-M_PI/2.-0.008;//M_PI/2.+0.1;//-M_PI/2.0;//1.135;3.7977;//1.57;//3.14;//  //radijani
 		  RB.v=v*metric; //mm ovo daje odomcallback
 		  RB.vy=vy*metric;
 		  RB.w=omega;
@@ -1082,6 +1082,8 @@ maporiginx=map.response.map.info.origin.position.x;
 maporiginy=map.response.map.info.origin.position.y;
 
   WH->LoadInit(mapwidth, mapheight, mapresolution, maporiginx, maporiginy);//konstrukcija sveg (navigacijski modul)
+  
+  
 #else
 
 // nacin ucitavanja prazne mape preko parametara
@@ -1185,21 +1187,21 @@ if ((F = fopen("gridmapaMap.dat","wt")) != NULL)
 
 #if (RECTANGULAR==0) && 1
 ////pioneer2dx
-	 for (int i=7; i<15; i++){
-	    if (i<8){
-      footprinty[0]=-2.*CELL_DIM;  footprintx[0]=1.2*CELL_DIM;
-      footprinty[1]=-2.*CELL_DIM;  footprintx[1]=-1.2*CELL_DIM;
-      footprinty[2]=-1.2*CELL_DIM;  footprintx[2]=-2.555*CELL_DIM;
-      footprinty[3]=1.2*CELL_DIM;  footprintx[3]=-2.555*CELL_DIM;
-      footprinty[4]=2.*CELL_DIM;  footprintx[4]=-1.2*CELL_DIM;
-      footprinty[5]=2.*CELL_DIM;  footprintx[5]=1.2*CELL_DIM;
-      footprinty[6]=1.2*CELL_DIM;  footprintx[6]=2.555*CELL_DIM;
-      footprinty[7]=-1.2*CELL_DIM;  footprintx[7]=2.555*CELL_DIM;
-      }else{
-      footprintx[i]=footprintx[0];
-      footprinty[i]=footprinty[0];
-      }
-    }
+//	 for (int i=7; i<15; i++){
+//	    if (i<8){
+//      footprinty[0]=-2.*CELL_DIM;  footprintx[0]=1.2*CELL_DIM;
+//      footprinty[1]=-2.*CELL_DIM;  footprintx[1]=-1.2*CELL_DIM;
+//      footprinty[2]=-1.2*CELL_DIM;  footprintx[2]=-2.555*CELL_DIM;
+//      footprinty[3]=1.2*CELL_DIM;  footprintx[3]=-2.555*CELL_DIM;
+//      footprinty[4]=2.*CELL_DIM;  footprintx[4]=-1.2*CELL_DIM;
+//      footprinty[5]=2.*CELL_DIM;  footprintx[5]=1.2*CELL_DIM;
+//      footprinty[6]=1.2*CELL_DIM;  footprintx[6]=2.555*CELL_DIM;
+//      footprinty[7]=-1.2*CELL_DIM;  footprintx[7]=2.555*CELL_DIM;
+//      }else{
+//      footprintx[i]=footprintx[0];
+//      footprinty[i]=footprinty[0];
+//      }
+//    }
 //circular
 //	 for (int i=7; i<15; i++){
 //	    if (i<8){

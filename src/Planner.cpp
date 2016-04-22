@@ -1376,7 +1376,7 @@ if (DS->prviput==2) goal_orientation=start_orientation;
         if ((ori= (ori_point *)malloc(pathori->size()*sizeof(ori_point)))==NULL) return 2;
 #if (IDEAL_MODEL==0 || 1)
         if (pathori->size()<=2){
-          DW->naCilju=true;
+//          DW->naCilju=true;
         }
 //        else{
 //          DW->naCilju=false;
@@ -1635,7 +1635,7 @@ if (i<pathori->size()-1){
 #endif
 #if (IDEAL_MODEL==0)
         if (path_length<=1){
-          DW->naCilju=true;
+//          DW->naCilju=true;
         }
 #endif
 

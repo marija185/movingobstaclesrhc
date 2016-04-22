@@ -354,23 +354,25 @@ void DynamicWindow::Sekvenca_izvodjenja(){
 #endif
 
 	}
-#if (IDEAL_MODEL==0) 
+#if (IDEAL_MODEL==0) || 1
 //rhc should stop in the goal cell without this condition (ideally yes)
 			double goal_tolerance=((WH->RB.x-WH->global_goal_workhorse.x)*(WH->RB.x-WH->global_goal_workhorse.x)+(WH->RB.y-WH->global_goal_workhorse.y)*(WH->RB.y-WH->global_goal_workhorse.y));
+      double plength = (PL->GetPathLength()-1)*CELL_DIM;
 //#if RECTANGULAR
-      if(naCilju)
+      if(naCilju || ((goal_tolerance<=GOAL_POSITION_TOLERANCE*GOAL_POSITION_TOLERANCE)&&(plength<=GOAL_POSITION_TOLERANCE)))
 //#else
 //			if((goal_tolerance<=GOAL_POSITION_TOLERANCE*GOAL_POSITION_TOLERANCE))//&&(!naCilju))  //pola radijusa robota (radijus, *4)
 //#endif
 			{
-//				SP.setpoint_v=0.;
+			    if (!naCilju) naCilju=true;
+				SP.setpoint_v=0.;
 				//SP.setpoint_w=0.;
-//				SP.setpoint_vy=0.;
+				SP.setpoint_vy=0.;
 	printf("DW: near goal ramp: reference from the previous step (%f,%f,%f)\n",rbv,rbw*RuS,rbvy);
 	double theta_tolerance=fabs(WH->RB.th-WH->global_goal_workhorse.th);
 	    while (theta_tolerance>=M_PI)
 		    theta_tolerance=fabs(theta_tolerance-2*M_PI);
-	printf("DW: goal_tolerance=%f, theta_tolerance=%f deg\n",sqrt(goal_tolerance), fabs(theta_tolerance)*RuS);
+	printf("DW: goal_tolerance=%f, theta_tolerance=%f deg, path_length =%f \n",sqrt(goal_tolerance), fabs(theta_tolerance)*RuS, plength);
 
 #if THETAGOAL
 //#if RECTANGULAR	
@@ -1646,7 +1648,7 @@ void DynamicWindow::cellExitControl(double x, double y, double th, double rbv, d
     }
 
     distance_g = sqrt((E.x-x)*(E.x-x)+(E.y-y)*(E.y-y));
-#if (IDEAL_MODEL==0)
+#if (IDEAL_MODEL==0) || 1
     if (naCilju){
       distance_g = 0;
     }
@@ -1776,7 +1778,7 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
     }
 
     distance_g = sqrt((E.x-x)*(E.x-x)+(E.y-y)*(E.y-y));
-#if (IDEAL_MODEL==0)
+#if (IDEAL_MODEL==0) || 1
     if (naCilju){
       distance_g = 0;
     }
@@ -1803,7 +1805,7 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
 #if TAU_SEARCH
     tau_up = VDStarbest/COSTSTRAIGHT;
 #else    
-    VDStar = DS->numCellsFromXtoG(temp)*COSTSTRAIGHT;
+//    VDStar = DS->numCellsFromXtoG(temp)*COSTSTRAIGHT;
     tau_up = (VDStar/COSTSTRAIGHT + traversalcostVDStar)*ceil(M_PI/(DW_MAX*STEP*STEP)) + VDStar/COSTSTRAIGHT*ceil(sqrt(5)/2*CELL_DIM/(DV_MAX*STEP*STEP)); 
 //    tau_up = 0;
 #endif

@@ -42,7 +42,7 @@
 //gain of the translational velocity (multiply with rho to see what is contribution of v,vy)
 #define GAINV M_PI*0.1 //M_PI/0.00100
 //objective function (1-sum, 0-last point)
-#define OBJECTIVE_SUM 0
+#define OBJECTIVE_SUM 1
 //conditions for stability 1-all points have cost ge than end point S(i)>=S(T); 0-none; -1- only S(0)>=S(T)
 #define OBJECTIVE_CONDITIONS 0
 //exitcontrol for stability
@@ -95,8 +95,8 @@
 #define SC2   100.
 #define SC_W 0.0
 //TOLERANCIJA BRZINA -  brzinom 0 se smatra i brzina od 5mm/s
-#define V_TOLERANCE  (0.0000000001*DV_MAX)  //3 mm/s u milimetrima
-#define W_TOLERANCE  (0.0000000001*DW_MAX)  //1 deg/s u radijanima (5.*M_PI/180.)
+#define V_TOLERANCE  (0.001*DV_MAX)  //3 mm/s u milimetrima
+#define W_TOLERANCE  (0.001*DW_MAX)  //1 deg/s u radijanima (5.*M_PI/180.)
 //maximal value of the path cost in the criterium
 #define MAXCOST 1000000000.
 

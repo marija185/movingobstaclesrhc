@@ -435,6 +435,7 @@ int GridMap::fill_Map()
   int around_static=2; //moving obstacle must be distanced for this number of cells from the static cell
   teziste_x=0.;teziste_y=0.;//inicijalizacija suma x i y koordinata
   double angleborder=M_PI/2; //definira snitu torte vidljivosti
+  double anglefilt=LASER_MIN_MAX_ANGLE*M_PI/180.; //filtered laser readings due to obstacles on the robot shape
   double angleres=0.5*M_PI/180.; //svakih pola stupnja zraka default
 //   int tezisteneudstar=-1; //pamti indeks tezista koje se ne smije upisati u dstar mapu jer je u DW zabiljezen sudar s translatiranom pokretnom preprekom
 //   I_point pomocnoOdTezista[WH->LB.laser_pointer_new];
@@ -455,7 +456,7 @@ int GridMap::fill_Map()
   if (WH->LB.laser_pointer_new) {
   	angleborder=fabs(WH->LB.sviscanovi[0].th);//medo prava kutna granica od svih ocitanja lasera
   	angleres=fabs(WH->LB.sviscanovi[WH->LB.laser_pointer_new-1].th-WH->LB.sviscanovi[WH->LB.laser_pointer_new-2].th);
-  	printf("angleborder=%f, laser in g.k.s (%f,%f,%f), WH->RB =(%f,%f,%f)\n",angleborder,laserx,lasery,WH->laserth,WH->RB.x,WH->RB.y,WH->RB.th);
+  	printf("angleborder=%f, anglefilt=%f, laser in g.k.s (%f,%f,%f), WH->RB =(%f,%f,%f)\n",angleborder,anglefilt,laserx,lasery,WH->laserth,WH->RB.x,WH->RB.y,WH->RB.th);
   for (int i=0;i<numoldmovings;i++) {//cuvati polje starih pokretnih i brisati ih ako su unutar konusa vidljivosti od 3 m ispred novih ocitanja
 	  mapper_point_temp.x=stare_moving[i].x;
 	  mapper_point_temp.y=stare_moving[i].y;
@@ -467,7 +468,7 @@ int GridMap::fill_Map()
 	  if (local_th1<-M_PI) local_th1+=2*M_PI;
 	  if (local_th1>M_PI) local_th1-=2*M_PI;
 	  //ovo s -kutnagranica radi samo ako je laser centriran a to je uvijek s laserima
-	  if (check_point(mapper_point_temp)&&(local_th1<angleborder)&&(local_th1>-1*angleborder)&&(distance_old_moving<(LASER_RANGE_MAX-2.*Map_Cell_Size)*(LASER_RANGE_MAX-2.*Map_Cell_Size))) {//da ne bi po rubovima pisao brisao
+	  if (check_point(mapper_point_temp)&&(local_th1<anglefilt)&&(local_th1>-1*anglefilt)&&(distance_old_moving<(LASER_RANGE_MAX-2.*Map_Cell_Size)*(LASER_RANGE_MAX-2.*Map_Cell_Size))) {//da ne bi po rubovima pisao brisao
 // 		  if ((Map[cell_point_temp.x][cell_point_temp.y].time_stamp!=-1)) {//u ovom slucaju bi mogao prebrisati -1, pa zato treba taj uvjet ispitati
 		  //gledamo da li su stare prepreke blizu onih indeksizanepunjenje pa da ih izbrisemo ali samo iz D* mape. ovdje ce ostati
 		  if ((num_col_points) && (Map[cell_point_temp.x][cell_point_temp.y].time_stamp !=-1) && (Map[cell_point_temp.x][cell_point_temp.y].time_stamp != -2)){
@@ -483,7 +484,7 @@ int GridMap::fill_Map()
 			  }
 		  }
 		  //jos treba uvjeta da ne prebrise prepreku koja je iza zida 
-		  ii=int((local_th1+angleborder)/angleres);//medo popravio di je u polju svih laserskih ocitanja kojih ima 181
+		  ii=int((local_th1+angleborder)/angleres);//medo popravio di je u polju svih laserskih ocitanja kojih ima 181 npr
 // 			  ii=int((lokalna_th1+PI/2)*35/PI);//di je u polju svih laserskih ocitanja
 // 			  printf("kut prepreke=%f, udaljenost=%f, odredjeni indeks=%d, kut od indeksa=%f, r od indeksa=%f\n",lokalna_th1,trimetra,ii,WH->LB.sviscanovi[ii].th,WH->LB.sviscanovi[ii].r);
 /*			  if (ii-2>=0)
@@ -556,7 +557,7 @@ int GridMap::fill_Map()
 /*	  if ((num_col_points)&&(num_col_points_old==0))
 		  printf("tu bi bilo mozda za brisanje, lokalna_th=%f-%f=%f\n",kutic,WH->RB.th,lokalna_th);*/
       //ako je hit unutar mape i ispred robota (u rangeu), da ne bi brisao ono sto je iza njega dok se okrece
-	  if(check_point(mapper_point_temp)&&(local_th<angleborder)&&(local_th>-1*angleborder)&&(distance_moving<(LASER_RANGE_MAX-2.*Map_Cell_Size)*(LASER_RANGE_MAX-2.*Map_Cell_Size)))
+	  if(check_point(mapper_point_temp)&&(local_th<anglefilt)&&(local_th>-1*anglefilt)&&(distance_moving<(LASER_RANGE_MAX-2.*Map_Cell_Size)*(LASER_RANGE_MAX-2.*Map_Cell_Size)))
 	  {//ispitati slucaj da ne postoje stari col pointovi - samo onda postavljam time_stamp na counter_moving
 /*		  if ((num_col_points)&&(num_col_points_old==0))
 			  printf("time_stamp=%d, lokalna_th=%f-%f=%f\n",Map[cell_point_temp.x][cell_point_temp.y].time_stamp,kutic,WH->RB.th,lokalna_th);*/

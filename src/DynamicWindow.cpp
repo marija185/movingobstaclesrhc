@@ -447,6 +447,19 @@ if (flag_kl_old){ //do the ramp in the case of the goal tolerance
 	if (0&&(fabs(SP.setpoint_v)+fabs(SP.setpoint_vy)>V_TOLERANCE)&&(fabs(SP.setpoint_w)>W_TOLERANCE)){
 	printf("hm: SP.setpoint=%f,%f,%f\n",SP.setpoint_v,SP.setpoint_vy,SP.setpoint_w);
 	}
+	if (naCilju){
+			KL_old_temp.v[1]=SP.setpoint_v;
+		  KL_old_temp.vy[1]=SP.setpoint_vy;
+		  KL_old_temp.w[1]=SP.setpoint_w;
+		  for (int i=2; i<N_KL; i++){
+  	    kin_model_evol(&KL_old_temp,i);
+  	    KL_old_temp.S[i]=computeInterpolatedCost(KL_old_temp.x[i],KL_old_temp.y[i],KL_old_temp.th[i]);		  
+		  }
+		  if (ljapunov<KL_old_temp.S[N_KL]){
+		    printf("ljapunov increase for exit control");
+		  }
+	    ljapunov=KL_old_temp.S[N_KL];
+	}
 // 	vs=vc;//pamti za sljedeci ciklus
 // 	ws=wc;
 	if (ljapunov>=MAXCOST)
@@ -1601,12 +1614,27 @@ void DynamicWindow::cellExitControl(double x, double y, double th, double rbv, d
   	while (t>=2*M_PI) t-=2*M_PI;
   	while (t<0) t+=2*M_PI;
 
-
   //mid point 
 		temp=GM->cell_point_temp;
 		C.x=temp.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
 		C.y=temp.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
+#if DSTAR3DORI
+    DStarSearchNode* currentNode;
+    DStarSearchNode* nextNode;
+    DStarSearchNode* nextnextNode;
+		temp.th=cspace->worldToMapTheta(t);
+    currentNode = cspace->getDStarSearchNode(temp.x,temp.y,temp.th);
+    best.x=-1; best.y=-1;
+    if (currentNode!=NULL){
+      nextNode=currentNode->getNext();
+      if (nextNode!=NULL){
+        best.x= ((OIDStarSearchNode*) nextNode)->x;
+        best.y= ((OIDStarSearchNode*) nextNode)->y; 
+      }
+    }    
+#else
 		best=DS->map[temp.x][temp.y]._next;
+#endif
     C_plus.x=best.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
     C_plus.y=best.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
     E.x=(C.x+C_plus.x)/2.;
@@ -1616,7 +1644,16 @@ void DynamicWindow::cellExitControl(double x, double y, double th, double rbv, d
 #if TAU_SEARCH
     E=C_plus;
     if (best.x!=-1){
+#if DSTAR3DORI
+      nextnextNode = nextNode->getNext();
+      nextbest.x=-1; nextbest.y=-1;
+      if (nextnextNode!=NULL){
+        nextbest.x= ((OIDStarSearchNode*) nextnextNode)->x;
+        nextbest.y= ((OIDStarSearchNode*) nextnextNode)->y; 
+      }
+#else
       nextbest = DS->map[best.x][best.y]._next;
+#endif
       if (nextbest.x == -1){
         E.th = WH->global_goal_workhorse.th;
       } else {
@@ -1627,7 +1664,16 @@ void DynamicWindow::cellExitControl(double x, double y, double th, double rbv, d
     if (((x==E.x)&&(C_plus.y==C.y))||((y==E.y)&&(C_plus.x==C.x))) //za slucaj kad su tocke na bridu
     {
       if (best.x!=-1){
+#if DSTAR3DORI
+      nextnextNode = nextNode->getNext();
+      nextbest.x=-1; nextbest.y=-1;
+      if (nextnextNode!=NULL){
+        nextbest.x= ((OIDStarSearchNode*) nextnextNode)->x;
+        nextbest.y= ((OIDStarSearchNode*) nextnextNode)->y; 
+      }
+#else
         nextbest = DS->map[best.x][best.y]._next;
+#endif
         if (nextbest.x == -1){
           E = WH->global_goal_workhorse;
         } else {
@@ -1710,7 +1756,7 @@ double DynamicWindow::computeTau(double x, double y, double th){
 double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
 #endif
 
-  double alfa, delta, tau, tau_up, VDStar, VDStarbest, traversalcostVDStar, traversalcostbest, distance_g, t;
+  double alfa, delta, tau, tau_up, VDStar, VDStarbest, traversalcostVDStar, distance_g, t;
   double num_turn, num_translate;
   R_point C;
   I_point temp, best, nextbest;
@@ -1725,15 +1771,34 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
   	while (t>=2*M_PI) t-=2*M_PI;
   	while (t<0) t+=2*M_PI;
 
-
   //mid point 
 		temp=GM->cell_point_temp;
+#if DSTAR3DORI
+    DStarSearchNode* currentNode;
+    DStarSearchNode* nextNode;
+    DStarSearchNode* nextnextNode;
+		temp.th=cspace->worldToMapTheta(t);
+    currentNode = cspace->getDStarSearchNode(temp.x,temp.y,temp.th);
+    best.x=-1; best.y=-1;
+    VDStar = OBSTACLE;
+    traversalcostVDStar = 1;
+    if (currentNode!=NULL){
+      nextNode=currentNode->getNext();
+      if (nextNode!=NULL){
+        best.x= ((OIDStarSearchNode*) nextNode)->x;
+        best.y= ((OIDStarSearchNode*) nextNode)->y; 
+      }
+      VDStar = currentNode->h;    
+    }
+#else
 		VDStar=DS->map[temp.x][temp.y].h_cost_int;
-		VDStarbest=VDStar;
 		traversalcostVDStar=DS->map[temp.x][temp.y].traversal_cost;
+		best=DS->map[temp.x][temp.y]._next;
+#endif
+
+		VDStarbest=VDStar;
 		C.x=temp.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
 		C.y=temp.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
-		best=DS->map[temp.x][temp.y]._next;
     C_plus.x=best.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
     C_plus.y=best.y*GM->Map_Cell_Size+GM->Map_Home.y+GM->Map_Cell_Size/2;
     E.x=(C.x+C_plus.x)/2.;
@@ -1742,8 +1807,18 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
 #if TAU_SEARCH
     E=C_plus;
     if (best.x!=-1){
+#if DSTAR3DORI
+      nextnextNode = nextNode->getNext();
+      nextbest.x=-1; nextbest.y=-1;
+      if (nextnextNode!=NULL){
+        nextbest.x= ((OIDStarSearchNode*) nextnextNode)->x;
+        nextbest.y= ((OIDStarSearchNode*) nextnextNode)->y; 
+      }
+      VDStarbest = nextNode->h;
+#else
       nextbest = DS->map[best.x][best.y]._next;
       VDStarbest = DS->map[best.x][best.y].h_cost_int;
+#endif
       if (nextbest.x == -1){
         E.th = WH->global_goal_workhorse.th;
       } else {
@@ -1754,7 +1829,16 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
     if (((x==E.x)&&(C_plus.y==C.y))||((y==E.y)&&(C_plus.x==C.x))) //za slucaj kad su tocke na bridu
     {
       if (best.x!=-1){
+#if DSTAR3DORI
+        nextnextNode = nextNode->getNext();
+        nextbest.x=-1; nextbest.y=-1;
+        if (nextnextNode!=NULL){
+          nextbest.x= ((OIDStarSearchNode*) nextnextNode)->x;
+          nextbest.y= ((OIDStarSearchNode*) nextnextNode)->y; 
+        }
+#else
         nextbest = DS->map[best.x][best.y]._next;
+#endif
         if (nextbest.x == -1){
           E = WH->global_goal_workhorse;
         } else {
@@ -1772,9 +1856,6 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
 		{
   //on the goal
       E = WH->global_goal_workhorse;
-      traversalcostbest = traversalcostVDStar;
-    }else{
-      traversalcostbest=DS->map[best.x][best.y].traversal_cost;
     }
 
     distance_g = sqrt((E.x-x)*(E.x-x)+(E.y-y)*(E.y-y));
@@ -1789,7 +1870,7 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
       if (alfa<0){
       	alfa=alfa+2*M_PI;
       }
-    }else{//at goal
+    }else{//at exit point
       distance_g = 0;
       alfa = E.th;
     }
@@ -1805,7 +1886,7 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
 #if TAU_SEARCH
     tau_up = VDStarbest/COSTSTRAIGHT;
 #else    
-//    VDStar = DS->numCellsFromXtoG(temp)*COSTSTRAIGHT;
+//    VDStar = DS->numCellsFromXtoG(temp)*COSTSTRAIGHT; //for negative weights this is different that VDStar
     tau_up = (VDStar/COSTSTRAIGHT + traversalcostVDStar)*ceil(M_PI/(DW_MAX*STEP*STEP)) + VDStar/COSTSTRAIGHT*ceil(sqrt(5)/2*CELL_DIM/(DV_MAX*STEP*STEP)); 
 //    tau_up = 0;
 #endif

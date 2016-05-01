@@ -2076,7 +2076,7 @@ void Planner::Prazni(int i, int j,I_point *pamtiindekse,int *brojpam, int star_s
 				if((temp.x>=0)&& (temp.x<star_size_x)&&(temp.y>=0)&& (temp.y<star_size_y))
 				{
 				  //unutar robot maske
-					if (1||(abs(k)<=robot_mask)&&(abs(l)<=robot_mask)&&(abs(k)+abs(l)<2*robot_mask))
+					if (0||(abs(k)<=robot_mask)&&(abs(l)<=robot_mask)&&(abs(k)+abs(l)<2*robot_mask))
 //					if ((abs(k)<=robot_mask)&&(abs(l)<=robot_mask))
 					{ 
 						star_map[temp.x][temp.y].preprekaokolo--;

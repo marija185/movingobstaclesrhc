@@ -311,14 +311,14 @@ double robotX, robotY,robotTH,robotW,robotV;
       cmd_vel_topic_ = "cmd_vel";
       sickAngularOffset = 0;//M_PI/2.;
       vy_max = 0.; //non zero for omnidrive
-      vx_max = 1000.; //diff
+      vx_max = 500.; //1000.; //diff
       vx_min = 0.; //no reverse
       vy_min = 0.;
-      dvx_max = 600.; //acc
+      dvx_max = 500; //600.; //acc
       dvy_max = 0.; //omnidrive
-      w_max = 100.;
-      w_min	= -100.;
-      dw_max = 100.;
+      w_max = 50.; //100.;
+      w_min	= -50.; //-100.;
+      dw_max = 70.; //100.;
 
       nh_.getParam("/spoj/base_frame", base_frame_);
       nh_.getParam("/spoj/odom_topic", odom_topic_);

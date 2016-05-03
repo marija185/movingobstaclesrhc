@@ -36,9 +36,12 @@ run the robot p3dx
 
 sudo chmod a+rw /dev/ttyUSB0 (controller)
 sudo chmod a+rw /dev/ttyUSB1 (laser)
-roslaunch src/movingobstaclesrhc/launch/pioneer3dx.launch (transform base_link laser)
-roslaunch src/movingobstaclesrhc/launch/navigation_robot.launch (amcl localization and rhc navigation)
+roslaunch movingobstaclesrhc pioneer3dx.launch (transform base_link laser)
+roslaunch movingobstaclesrhc navigation_robot.launch (amcl localization and rhc navigation)
 
+run the robot husky
+roslaunch movingobstaclesrhc husky_docking_new.launch
+roslaunch movingobstaclesrhc startmovinghusky.launch
 
 making a map:
 $ roslaunch src/movingobstaclesrhc/launch/pioneer3dx.launch

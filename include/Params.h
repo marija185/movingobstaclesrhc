@@ -66,7 +66,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //not using laser readings, only static map - 1, 0 is using laser 
 #define NO_LASER 0
 //inverted laser on husky
-#define LASER_INVERTED 0
+#define LASER_INVERTED 1
 //filtering laser border reading outside of angle set plus minus in degrees (112 used for husky because of laptop behind)
 #define LASER_MIN_MAX_ANGLE 112
 
@@ -85,9 +85,9 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 
 #define DSTAR 1
 // 3D search
-#define DSTAR3D 0
+#define DSTAR3D 1
 // 3D search plus orientations (use with DSTAR3D 1 and USE3DCOST 0)
-#define DSTAR3DORI 0
+#define DSTAR3DORI 1
 //cost traversals in 3d, influence only for 3D search
 #define USE3DCOST 0
 //maxdistance cost used in cells
@@ -126,8 +126,8 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 
 //GABARITI ROBOTA
 //is the robot rectangular shape (1 yes, 0 circular)
-#define RECTANGULAR	0 
-#define RR			256.//301.406//260.//560.//356.//paper 156//expbig 456.
+#define RECTANGULAR	1 
+#define RR			356.//301.406//260.//560.//356.//paper 156//expbig 456.
 #define RRY			550.//498.//543.405//840.//598.//paper 798//expbig 698.
 #define GOAL_POSITION_TOLERANCE (1*CELL_DIM/2.*sqrt(2.))
 #define THETA_TOLERANCE (10*M_PI/180.)

@@ -1,0 +1,70 @@
+<launch>
+
+   <node pkg="tf" type="static_transform_publisher" name="base_link_laser" args="0.44 0 0 3.141592 3.141592 0 /base_link /laser 40"/>
+   <node pkg="tf" type="static_transform_publisher" name="base_footprint_base_link" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_footprint /base_link 40"/>;
+
+    <arg name="drive_speed" default="0.62" />
+    <arg name="turn_speed" default="0.54" />
+    <arg name="joy_dev" default="/dev/input/js0" />
+    <arg name="cmd_topic" default="cmd_vel" />
+
+    <arg name="port" default="/dev/prolific" />
+    <node pkg="clearpath_base" type="kinematic.py" name="clearpath_base" ns="husky">
+        <param name="port" value="/dev/ttyUSB0" />
+        <param name="cmd_fill" value="True" />
+        <param name="data/system_status" value="10" />
+        <param name="data/safety_status" value="10" />
+        <param name="data/encoders" value="10" />
+        <param name="data/differential_speed" value="10" />
+        <param name="data/differential_output" value="10" />
+        <param name="data/power_status" value="1" />
+    </node>
+
+    
+    <!--include file="/opt/ros/fuerte/stacks/clearpath_husky/husky_bringup/launch/core/teleop.launch"/-->
+
+    <node name="sick" pkg="LMS1xx" type="LMS100" ns="lidar">
+       	<param name="host" value="192.168.1.4"/>
+    	<param name="frame_id" value="laser"/>
+    </node>
+
+    <node pkg="receive_xsens" type="receive_xsens" name="IMU" output="screen"/>
+    <include file="$(find velodyne_pointcloud)/launch/32e_points.launch"/>
+    <node pkg="rvl_velodyne" type="odometry_husky" name="odometry_husky" output="screen"/>
+
+
+   <!--include file="$(find movingobstaclesrhc)/launch/gmappinghusky.launch" /-->
+<!---->
+   <node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage)/galerija.yaml" respawn="false" >
+	<param name="frame_id" value="/map" />
+   </node>
+
+   <!-- For real robot amcl localization -->
+   <include file="$(find movingobstaclesrhc)/launch/amcl_robot_husky.launch" />
+
+	<!-- For real robot with hector_slam 
+	<include file="$(find movingobstaclesrhc)/launch/hectorexp.launch" /> -->
+
+	<!-- For real robot with gmapping 
+	<include file="$(find movingobstaclesrhc)/launch/gmappingexp.launch" /> -->
+<!-- running the navigation
+    <node name="spoj" pkg="movingobstaclesrhc" type="spoj" >
+        <param name="base_frame" value="base_link" />
+        <param name="odom_topic" value="/slam/odom" />
+        <param name="scan_topic" value="/lidar/scan" />
+        <param name="cmd_vel_topic" value="/husky/cmd_vel" />
+        <param name="sick_angular_offset" type="double" value="0" />
+        <param name="vx_min" type="double" value="0" />
+        <param name="vx_max" type="double" value="350." />
+        <param name="dvx_max" type="double" value="300." />
+        <param name="w_min" type="double" value="-50." />
+        <param name="w_max" type="double" value="50." />
+        <param name="dw_max" type="double" value="70." />
+    </node> -->
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find movingobstaclesrhc)/dodich.rviz" /> 
+
+  
+</launch>
+
+

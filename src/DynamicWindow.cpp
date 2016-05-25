@@ -1643,6 +1643,7 @@ void DynamicWindow::cellExitControl(double x, double y, double th, double rbv, d
 
 #if TAU_SEARCH
     E=C_plus;
+#endif
     if (best.x!=-1){
 #if DSTAR3DORI
       nextnextNode = nextNode->getNext();
@@ -1655,12 +1656,14 @@ void DynamicWindow::cellExitControl(double x, double y, double th, double rbv, d
       nextbest = DS->map[best.x][best.y]._next;
 #endif
       if (nextbest.x == -1){
-        E.th = WH->global_goal_workhorse.th;
+//        E.th = WH->global_goal_workhorse.th;
+        E = WH->global_goal_workhorse;
       } else {
         E.th = atan2((nextbest.y-best.y),(nextbest.x-best.x));      
       }
     }      
-#else
+//#else
+#if (TAU_SEARCH==0)
     if (((x==E.x)&&(C_plus.y==C.y))||((y==E.y)&&(C_plus.x==C.x))) //za slucaj kad su tocke na bridu
     {
       if (best.x!=-1){
@@ -1806,6 +1809,7 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
 
 #if TAU_SEARCH
     E=C_plus;
+#endif
     if (best.x!=-1){
 #if DSTAR3DORI
       nextnextNode = nextNode->getNext();
@@ -1820,12 +1824,13 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
       VDStarbest = DS->map[best.x][best.y].h_cost_int;
 #endif
       if (nextbest.x == -1){
-        E.th = WH->global_goal_workhorse.th;
+        E = WH->global_goal_workhorse;
       } else {
         E.th = atan2((nextbest.y-best.y),(nextbest.x-best.x));      
       }
     }      
-#else
+//#else
+#if (TAU_SEARCH==0)
     if (((x==E.x)&&(C_plus.y==C.y))||((y==E.y)&&(C_plus.x==C.x))) //za slucaj kad su tocke na bridu
     {
       if (best.x!=-1){
@@ -1839,7 +1844,7 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
 #else
         nextbest = DS->map[best.x][best.y]._next;
 #endif
-        if (nextbest.x == -1){
+        if ((nextbest.x == -1) || ((nextbest.x==DS->Goal.x)&&(nextbest.y==DS->Goal.y))){
           E = WH->global_goal_workhorse;
         } else {
 		      C.x=nextbest.x*GM->Map_Cell_Size+GM->Map_Home.x+GM->Map_Cell_Size/2;
@@ -1870,7 +1875,7 @@ double DynamicWindow::computeInterpolatedCost(double x, double y, double th){
       if (alfa<0){
       	alfa=alfa+2*M_PI;
       }
-    }else{//at exit point
+    }else{//at exit point (or at goal for variant 1)
       distance_g = 0;
       alfa = E.th;
     }

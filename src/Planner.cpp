@@ -1739,7 +1739,7 @@ if (i<pathori->size()-1){
 //	      double xlow=5500., xhigh=5800., ylow=1200., yhigh=1500., thlow=270., thhigh=90.; 
 //	      double xlow=0., xhigh=GM->Map_Dim_X_A, ylow=0., yhigh=GM->Map_Dim_Y_A, thlow=0., thhigh=0.;
 //	      double xlow=3300., xhigh=3600., ylow=3300., yhigh=3600., thlow=0., thhigh=90.; //smap
-	      double xlow=1300., xhigh=1600., ylow=2300., yhigh=2600., thlow=0., thhigh=90.; //smap
+	      double xlow=20900., xhigh=21100., ylow=5900., yhigh=6200., thlow=0., thhigh=90.; //smap
 //	      double xlow=900., xhigh=1200., ylow=7700., yhigh=8000., thlow=-90., thhigh=90.;//corridor goal
 //	      double xlow=5500., xhigh=5800., ylow=3200., yhigh=3500., thlow=0., thhigh=100.;//corridor entrance passage
 //	      double xlow=9100., xhigh=9400., ylow=1400., yhigh=1700., thlow=90., thhigh=190.;//corridor start

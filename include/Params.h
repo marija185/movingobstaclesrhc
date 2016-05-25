@@ -68,7 +68,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //inverted laser on husky
 #define LASER_INVERTED 0
 //filtering laser border reading outside of angle set plus minus in degrees (112 used for husky because of laptop behind)
-#define LASER_MIN_MAX_ANGLE 112
+#define LASER_MIN_MAX_ANGLE 135
 
 //width of the robot (acc. y axis)
 #define ROBOT_MASK (ceil(RR/CELL_DIM))

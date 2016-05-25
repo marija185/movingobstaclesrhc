@@ -755,9 +755,9 @@ no_path_counter=0;
 #endif
 	        }
 			planner_path_original.size_path=temp_length;
-			global_goal_workhorse.x=temp_point[temp_length-1].x;
-			global_goal_workhorse.y=temp_point[temp_length-1].y;
-			global_goal_workhorse.th=temp_point[temp_length-1].th;
+//			global_goal_workhorse.x=temp_point[temp_length-1].x;
+//			global_goal_workhorse.y=temp_point[temp_length-1].y;
+//			global_goal_workhorse.th=temp_point[temp_length-1].th;
 #if (KOMBINACIJA==1) || DSTAR_REVERSE
       //tu ce biti logiran extra path - FD* path
 			temp_length=DS->getPathLength();
@@ -812,9 +812,9 @@ planner_path_run.path_intup=reallociraj_double(planner_path_run.path_intup, (pla
 #endif
     	}
 	planner_path_run.size[planner_path_run.broj]=temp_length;
-	global_goal_workhorse.x=temp_point[temp_length-1].x;
-	global_goal_workhorse.y=temp_point[temp_length-1].y;
-	global_goal_workhorse.th=temp_point[temp_length-1].th;
+//	global_goal_workhorse.x=temp_point[temp_length-1].x;
+//	global_goal_workhorse.y=temp_point[temp_length-1].y;
+//	global_goal_workhorse.th=temp_point[temp_length-1].th;
 	planner_path_run.broj++;
     	planner_path_run.size_path+=temp_length;
 #if (KOMBINACIJA==1) || DSTAR_REVERSE
@@ -1009,7 +1009,7 @@ planner_path_run.path_intup=reallociraj_double(planner_path_run.path_intup, (pla
  	vremenska_razlika=(mySecNow-mySecStart)*1000+(myMSecNow-myMSecStart);
  	printf("WH> after Planner %d ms.\n", vremenska_razlika);
 
-    if( (path_found==1) || (path_found==2)) 
+    if( (path_found==1) ) //|| (path_found==2)) 
     {
 	    if (!initial){
 		    rbv=RB.v;
@@ -1247,7 +1247,7 @@ planner_path_run.path_intup=reallociraj_double(planner_path_run.path_intup, (pla
 /*		if (DS->prepreka.x==-1){
 			Logger();
 			processState=HALT;*/
-#if RECTANGULAR
+#if RECTANGULAR || 1
 			no_path_counter++;
 			if (no_path_counter==1) GM->reset();
 			if (no_path_counter>20){

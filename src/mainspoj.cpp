@@ -8,6 +8,7 @@
 #include <math.h>
 //#include "args.h"
 
+
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
 
 
@@ -600,6 +601,8 @@ void moj::executeMotion(){
 	FILE	*logfile, *goalfile, *F;
 	double tfx, tfy, yaw;
 
+  actionlib_msgs::GoalStatus status;
+
 #if 1 //stari nacin
 	  tf::StampedTransform transform;
           double pitch, roll;
@@ -921,7 +924,9 @@ void moj::executeMotion(){
 		  } // if ciklus = 11
 		  if (voznja)
 		  {
-//			  printf("Usao sam u voznju\n");
+          status.status=actionlib_msgs::GoalStatus::ACTIVE;
+          status.text="goal set ("+std::to_string(goal.x) + ","+ std::to_string(goal.y)+","+std::to_string(goal.th)+")";
+
 			  if (novicilj){
 				  novicilj=false;
 
@@ -937,6 +942,10 @@ void moj::executeMotion(){
 			  }
         DW->ChangeVariables(robotX,robotY,robotTH,robotW,robotV);
 			  //DW->Pokretna_prepreka(robotX,robotY,robotTH,robotW,robotV);
+			  
+			  if (WH->no_path_counter>0){
+			    status.text="no path to goal ("+std::to_string(goal.x) + ","+ std::to_string(goal.y)+","+std::to_string(goal.th)+")";
+			  }
 			  WH->process();//pozivanje procesa koji sve racuna
 		          
 		  }
@@ -949,7 +958,11 @@ void moj::executeMotion(){
 			  novicilj=true;
 			  printf("Finished! My pose is (%f mm, %f mm, %f deg)\n",RB.x,RB.y,RB.th*RuS);
 
+          status.status=actionlib_msgs::GoalStatus::SUCCEEDED;
+          status.text="Finished at ("+std::to_string(RB.x) + ","+ std::to_string(RB.y)+","+std::to_string(RB.th)+")";
+
 		  }
+		  
 		  if (WH->processState==NO_PATH){//dabar
 			  novicilj=true; //neka izracuna pomaknuti cilj
 		  }
@@ -968,6 +981,8 @@ void moj::executeMotion(){
 		  vel.angular.z = setvel.w;//0.75;
 		  vel.linear.y = setvel.vy;
 		  
+    if (voznja==false) status.status=actionlib_msgs::GoalStatus::PENDING;
+    goal_status.publish(status);
 
 //testing omnidrive		  
 //		  vel.linear.x = 0.;

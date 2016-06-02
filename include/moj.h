@@ -40,6 +40,8 @@
 //#include <slam_msgs/NewStateReq.h>
 //#include <slam_msgs/active_slam.h>
 //#include <slam_msgs/NewAugment.h>
+#include <actionlib_msgs/GoalStatus.h>
+
 using namespace sensor_msgs;
 using namespace message_filters;
 
@@ -299,6 +301,7 @@ double robotX, robotY,robotTH,robotW,robotV;
   ros::ServiceServer service;
   ros::ServiceClient client,client_augment;
   ros::Subscriber set_goal;
+  ros::Publisher goal_status;
 
 
   GenericLaserScanFilterNode(ros::NodeHandle n)
@@ -354,7 +357,8 @@ double robotX, robotY,robotTH,robotW,robotV;
       sub_laser_front.subscribe(nh_, scan_topic_, 1); //scan2 za hratc da ne koristi laser
       sub_laser_rear.subscribe(nh_, "/scan_rear", 1);
 #endif
-	set_goal=nh_.subscribe("/move_base_simple/goal",1,&GenericLaserScanFilterNode::simple_goal,this); //ais_pose
+	set_goal=nh_.subscribe("/move_base_simple/goal",1,&GenericLaserScanFilterNode::simple_goal,this); 
+	goal_status=nh_.advertise<actionlib_msgs::GoalStatus>("/goal_status",1); 
   moving_sub = nh_.subscribe("movingRobot0", 1, &GenericLaserScanFilterNode::movingRobot0Callback, this);
 	vel_pub=nh_.advertise<geometry_msgs::Twist>(cmd_vel_topic_, 1); //samo cmd_vel /husky/cmd_vel
   moving_pub = nh_.advertise<movingobstaclesrhc::Moving>("movingRobot1",1);

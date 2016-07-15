@@ -9,6 +9,15 @@
 #include <sys/time.h>
 #include <bucketedqueue.h>
 #include <iostream>
+#include "ros/ros.h"
+
+struct celija{
+	float x;
+	float y;
+};
+
+
+
 
 //#define COSTDIAGONAL 1  
 //#define COSTSTRAIGHT 1      
@@ -185,6 +194,10 @@ class DStarCell{
 class DStar{
 
   public:
+//celija slam_po;
+std::vector <celija> loop_close_points;
+//loop_close_points.reserve(100);
+
 	  std::vector<I_point> blacklist;
 	  I_point Start; //current robot cell
 	  I_point Goal;
@@ -195,7 +208,7 @@ class DStar{
 	  atom *glava;		// open lst
 	  I_point *path;
 	  I_point MinCostElemLista;          //
-	  I_point negative_cell;
+	  std::vector <I_point> negative_cell;
 
 //for 3D search
 	int maxOri;

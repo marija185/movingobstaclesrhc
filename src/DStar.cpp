@@ -1,5 +1,6 @@
 #include "DStar.h"  //Params.h
 #include "GridMap.h"
+#include "rvl_psulmdemo/predict_trace.h"
 
 extern GridMap *GM;
 #if RECTANGULAR
@@ -7,8 +8,13 @@ extern GridMap *GM;
 extern CSpaceVoronoi *cspace;
 #endif
 
+
+
+
+
 int DStar::Init( int start_x, int start_y, int goal_x, int goal_y)
 {
+
 	racunaoupromjeni=0;
     time_stamp_counter++;       //azuriranje trenutnog time_stampa
 //     printf("DStar::Init> time_stamp_counter=%d\n",time_stamp_counter);
@@ -403,6 +409,57 @@ bool    DStar::SearchPath()
 			if (pipodjednom)
 				printf("main empty (%d,%d)\n",element.x,element.y);
 			insertNode(element,map[element.x][element.y].h_cost_int);
+
+			//if change is affecting optimal path (blacklist) reset part of the grid connected with the change
+			
+			std::vector<I_point>::iterator it;
+					it = std::find (blacklist.begin(), blacklist.end(), element);
+					  if ((it != blacklist.end()) && (blacklist.size()>0) ){
+
+						  //reset black list elements
+						  blacklist.clear();
+
+
+						  std::vector<I_point> terminator_list;
+						  terminator_list.push_back(element);
+						  I_point change;
+
+						  while (terminator_list.size()!=0) {
+							  //reset
+
+							  change=terminator_list.front();
+							  terminator_list.erase(terminator_list.begin()); //erase element from the list
+							  map[change.x][change.y].h_cost_int=10000;       //set value to inf
+
+
+#ifdef DSTAR_EIGHT_CONNECTED
+		for ( int d = 0; d < 8; d++ ) //for all neighbors
+#else
+		for ( int d = 0; d < 4; d++ ) //for all neighbors
+#endif
+          {
+            I_point point;
+      //odredjivanje pozicije novog susjeda
+            point.x=change.x+xofs[d];
+            point.y=change.y+yofs[d];
+            if ( IsValid( point.x, point.y )!=0 ){
+            if (map[point.x][point.y]._next.x==change.x && map[point.x][point.y]._next.y==change.y)
+
+
+            	terminator_list.push_back(point);
+
+            }
+          }
+
+
+
+
+						  }
+
+
+					  }
+
+			
 			watchdog_counter++;
 		}  //if
 #if DSTAR_REVERSE
@@ -430,6 +487,54 @@ bool    DStar::SearchPath()
 			printf("%d. neighbor of empty (%d,%d)\n",d,point.x,point.y);
 		insertNode(point,map[point.x][point.y].h_cost_int);
                 watchdog_counter++;
+
+
+                std::vector<I_point>::iterator it;
+                it = find (blacklist.begin(), blacklist.end(), element);
+                					  if ((it != blacklist.end()) && (blacklist.size()>0) ) {
+                						  //reset black list elements
+
+                												  blacklist.clear();
+
+
+                												  std::vector<I_point> terminator_list;
+                												  terminator_list.push_back(element);
+                												  I_point change;
+
+                												  while (terminator_list.size()!=0) {
+                													  //reset
+
+                													  change=terminator_list.front();
+                													  terminator_list.erase(terminator_list.begin()); //erase element from the list
+                													  map[change.x][change.y].h_cost_int=10000;       //set value to inf
+
+
+                						#ifdef DSTAR_EIGHT_CONNECTED
+                								for ( int d = 0; d < 8; d++ ) //for all neighbors
+                						#else
+                								for ( int d = 0; d < 4; d++ ) //for all neighbors
+                						#endif
+                						          {
+                						            I_point point;
+                						      //odredjivanje pozicije novog susjeda
+                						            point.x=change.x+xofs[d];
+                						            point.y=change.y+yofs[d];
+                						            if ( IsValid( point.x, point.y )!=0 ){
+                						            if (map[point.x][point.y]._next.x==change.x && map[point.x][point.y]._next.y==change.y)
+
+
+                						            	terminator_list.push_back(point);
+
+                						            }
+                						          }
+
+
+
+
+                												  }
+
+
+                											  }
               }  //if
 #if DSTAR_REVERSE
 	      if ((map[point.x][point.y].tag_reverse==CLOSED)&&(map[point.x][point.y].h_cost_int_reverse<OBSTACLE))
@@ -472,6 +577,56 @@ bool    DStar::SearchPath()
 				      printf("main occupied (%d,%d)\n",element.x,element.y);
 			      insertNode(element,map[element.x][element.y].h_cost_int);
 			      watchdog_counter++;
+
+
+			      std::vector<I_point>::iterator it;
+			                      it = find (blacklist.begin(), blacklist.end(), element);
+			                      					  if ((it != blacklist.end()) && (blacklist.size()>0) ) {
+			                      						  //reset black list elements
+			                      												  blacklist.clear();
+
+
+			                      												  std::vector<I_point> terminator_list;
+			                      												  terminator_list.push_back(element);
+			                      												  I_point change;
+
+			                      												  while (terminator_list.size()!=0) {
+			                      													  //reset
+
+			                      													  change=terminator_list.front();
+			                      													  terminator_list.erase(terminator_list.begin()); //erase element from the list
+			                      													  map[change.x][change.y].h_cost_int=10000;       //set value to inf
+
+
+			                      						#ifdef DSTAR_EIGHT_CONNECTED
+			                      								for ( int d = 0; d < 8; d++ ) //for all neighbors
+			                      						#else
+			                      								for ( int d = 0; d < 4; d++ ) //for all neighbors
+			                      						#endif
+			                      						          {
+			                      						            I_point point;
+			                      						      //odredjivanje pozicije novog susjeda
+			                      						            point.x=change.x+xofs[d];
+			                      						            point.y=change.y+yofs[d];
+			                      						            if ( IsValid( point.x, point.y )!=0 ){
+			                      						            if (map[point.x][point.y]._next.x==change.x && map[point.x][point.y]._next.y==change.y)
+
+
+			                      						            	terminator_list.push_back(point);
+
+			                      						            }
+			                      						          }
+
+
+
+
+			                      												  }
+
+
+			                      											  }
+
+
+
 		      }  //if
 #if DSTAR_REVERSE
 		      if ((map[element.x][element.y].tag_reverse==CLOSED)&&(map[element.x][element.y].h_cost_int_reverse<OBSTACLE))
@@ -500,6 +655,53 @@ bool    DStar::SearchPath()
 						      printf("%d. neighbor of occupied (%d,%d)\n",d,point.x,point.y);
 					      insertNode(point,map[point.x][point.y].h_cost_int);
 					      watchdog_counter++;
+
+
+					      std::vector<I_point>::iterator it;
+					                      it = find (blacklist.begin(), blacklist.end(), element);
+					                      					  if ((it != blacklist.end()) && (blacklist.size()>0) ) {
+					                      						  //reset black list elements
+					                      												  blacklist.clear();
+
+
+					                      												  std::vector<I_point> terminator_list;
+					                      												  terminator_list.push_back(element);
+					                      												  I_point change;
+
+					                      												  while (terminator_list.size()!=0) {
+					                      													  //reset
+
+					                      													  change=terminator_list.front();
+					                      													  terminator_list.erase(terminator_list.begin()); //erase element from the list
+					                      													  map[change.x][change.y].h_cost_int=10000;       //set value to inf
+
+
+					                      						#ifdef DSTAR_EIGHT_CONNECTED
+					                      								for ( int d = 0; d < 8; d++ ) //for all neighbors
+					                      						#else
+					                      								for ( int d = 0; d < 4; d++ ) //for all neighbors
+					                      						#endif
+					                      						          {
+					                      						            I_point point;
+					                      						      //odredjivanje pozicije novog susjeda
+					                      						            point.x=change.x+xofs[d];
+					                      						            point.y=change.y+yofs[d];
+					                      						            if ( IsValid( point.x, point.y )!=0 ){
+					                      						            if (map[point.x][point.y]._next.x==change.x && map[point.x][point.y]._next.y==change.y)
+
+
+					                      						            	terminator_list.push_back(point);
+
+					                      						            }
+					                      						          }
+
+
+
+
+					                      												  }
+
+
+					                      											  }
 				      }
 #if DSTAR_REVERSE
 				      if ((map[point.x][point.y].tag_reverse==CLOSED)&&(map[point.x][point.y].h_cost_int_reverse<OBSTACLE))
@@ -543,6 +745,55 @@ bool    DStar::SearchPath()
 					  printf("main of costmask change (%d,%d)\n",element.x,element.y);
 				  insertNode(element,map[element.x][element.y].h_cost_int);
 				  watchdog_counter++;
+
+
+				  std::vector<I_point>::iterator it;
+				                  it = find (blacklist.begin(), blacklist.end(), element);
+				                  					  if ((it != blacklist.end()) && (blacklist.size()>0) ) {
+				                  						  //reset black list elements
+				                  												  blacklist.clear();
+
+
+				                  												  std::vector<I_point> terminator_list;
+				                  												  terminator_list.push_back(element);
+				                  												  I_point change;
+
+				                  												  while (terminator_list.size()!=0) {
+				                  													  //reset
+
+				                  													  change=terminator_list.front();
+				                  													  terminator_list.erase(terminator_list.begin()); //erase element from the list
+				                  													  map[change.x][change.y].h_cost_int=10000;       //set value to inf
+
+
+				                  						#ifdef DSTAR_EIGHT_CONNECTED
+				                  								for ( int d = 0; d < 8; d++ ) //for all neighbors
+				                  						#else
+				                  								for ( int d = 0; d < 4; d++ ) //for all neighbors
+				                  						#endif
+				                  						          {
+				                  						            I_point point;
+				                  						      //odredjivanje pozicije novog susjeda
+				                  						            point.x=change.x+xofs[d];
+				                  						            point.y=change.y+yofs[d];
+				                  						            if ( IsValid( point.x, point.y )!=0 ){
+				                  						            if (map[point.x][point.y]._next.x==change.x && map[point.x][point.y]._next.y==change.y)
+
+
+				                  						            	terminator_list.push_back(point);
+
+				                  						            }
+				                  						          }
+
+
+
+
+				                  												  }
+
+
+				                  											  }
+
+
 			  }  //if
 #if DSTAR_REVERSE
 			  if ((map[element.x][element.y].tag_reverse==CLOSED)&&(map[element.x][element.y].h_cost_int_reverse<OBSTACLE))
@@ -570,6 +821,55 @@ bool    DStar::SearchPath()
 							  printf("%d. neighbor of costmask change (%d,%d)\n",d,point.x,point.y);
 						  insertNode(point,map[point.x][point.y].h_cost_int);
 						  watchdog_counter++;
+
+
+						  std::vector<I_point>::iterator it;
+						                  it = find (blacklist.begin(), blacklist.end(), element);
+						                  					  if ((it != blacklist.end()) && (blacklist.size()>0) ) {
+						                  						  //reset black list elements
+						                  												  blacklist.clear();
+
+
+						                  												  std::vector<I_point> terminator_list;
+						                  												  terminator_list.push_back(element);
+						                  												  I_point change;
+
+						                  												  while (terminator_list.size()!=0) {
+						                  													  //reset
+
+						                  													  change=terminator_list.front();
+						                  													  terminator_list.erase(terminator_list.begin()); //erase element from the list
+						                  													  map[change.x][change.y].h_cost_int=10000;       //set value to inf
+
+
+						                  						#ifdef DSTAR_EIGHT_CONNECTED
+						                  								for ( int d = 0; d < 8; d++ ) //for all neighbors
+						                  						#else
+						                  								for ( int d = 0; d < 4; d++ ) //for all neighbors
+						                  						#endif
+						                  						          {
+						                  						            I_point point;
+						                  						      //odredjivanje pozicije novog susjeda
+						                  						            point.x=change.x+xofs[d];
+						                  						            point.y=change.y+yofs[d];
+						                  						            if ( IsValid( point.x, point.y )!=0 ){
+						                  						            if (map[point.x][point.y]._next.x==change.x && map[point.x][point.y]._next.y==change.y)
+
+
+						                  						            	terminator_list.push_back(point);
+
+						                  						            }
+						                  						          }
+
+
+
+
+						                  												  }
+
+
+						                  											  }
+
+
 					  }  //if
 #if DSTAR_REVERSE
 					  if ((map[point.x][point.y].tag_reverse==CLOSED)&&(map[point.x][point.y].h_cost_int_reverse<OBSTACLE))
@@ -599,6 +899,185 @@ bool    DStar::SearchPath()
 	  //      NumElemPromjena=0;//to se radi u Planneru ali zbog debuganja moram tu napisati, a sad bum u moj.cc to napisala da tam mogu crtati
     }
 //------------------------------------------------------------
+
+/* if (0 && brojac_izracuna==0){
+
+    negative_cell.x=Start.x+10;
+    negative_cell.y=Start.y+10;
+    //element.x=Start.x + 30;
+        //element.y=Start.y - 5;
+    map[negative_cell.x][negative_cell.y].traversal_cost=-1000;
+    //map[element.x][element.y].traversal_cost=-100;
+    if ( (map[negative_cell.x][negative_cell.y].tag==CLOSED))// && (map[element.x][element.y].h_cost_int<OBSTACLE) ) //injega
+    		      {
+
+    			      insertNode(negative_cell,map[negative_cell.x][negative_cell.y].h_cost_int);
+    			      watchdog_counter++;
+
+
+    			      std::vector<I_point>::iterator it;
+    			                      it = find (blacklist.begin(), blacklist.end(), element);
+    			                      					  if ((it != blacklist.end()) && (blacklist.size()>0) ) {
+    			                      						  //reset black list elements
+    			                      												  blacklist.clear();
+
+
+    			                      												  std::vector<I_point> terminator_list;
+    			                      												  terminator_list.push_back(element);
+    			                      												  I_point change;
+
+    			                      												  while (terminator_list.size()!=0) {
+    			                      													  //reset
+
+    			                      													  change=terminator_list.front();
+    			                      													  terminator_list.erase(terminator_list.begin()); //erase element from the list
+    			                      													  map[change.x][change.y].h_cost_int=10000;       //set value to inf
+
+
+    			                      						#ifdef DSTAR_EIGHT_CONNECTED
+    			                      								for ( int d = 0; d < 8; d++ ) //for all neighbors
+    			                      						#else
+    			                      								for ( int d = 0; d < 4; d++ ) //for all neighbors
+    			                      						#endif
+    			                      						          {
+    			                      						            I_point point;
+    			                      						      //odredjivanje pozicije novog susjeda
+    			                      						            point.x=change.x+xofs[d];
+    			                      						            point.y=change.y+yofs[d];
+    			                      						            if ( IsValid( point.x, point.y )!=0 ){
+    			                      						            if (map[point.x][point.y]._next.x==change.x && map[point.x][point.y]._next.y==change.y)
+
+
+    			                      						            	terminator_list.push_back(point);
+
+    			                      						            }
+    			                      						          }
+
+
+
+
+    			                      												  }
+
+
+    			                      											  }
+
+
+    		      }
+
+   /* if ( (map[element.x][element.y].tag==CLOSED))// && (map[element.x][element.y].h_cost_int<OBSTACLE) ) //injega
+        		      {
+
+        			      insertNode(element,map[element.x][element.y].h_cost_int);
+        			      watchdog_counter++;
+        		      }
+
+
+}
+*/
+if (prviput==1){
+	//find two localization points - first and the middle one
+	int temp_sl=loop_close_points.size();
+
+    //compute values in the map
+
+
+
+
+      if (loop_close_points.size()>1){
+      
+      
+//for the first negative
+			GM->mapper_point_temp.x=loop_close_points[0].x;
+			GM->mapper_point_temp.y=loop_close_points[0].y;
+
+			if (GM->check_point(GM->mapper_point_temp))
+			{
+				printf("Negative point inside the map");
+			}
+			else {
+			printf("izvan mape sick (%f,%f)\n",GM->mapper_point_temp.x, GM->mapper_point_temp.y);
+
+			}
+
+
+			  negative_cell[0].x=GM->cell_point_temp.x;
+			  negative_cell[0].y=GM->cell_point_temp.y;
+
+//for the second negative
+			GM->mapper_point_temp.x=loop_close_points[temp_sl/2].x;
+			GM->mapper_point_temp.y=loop_close_points[temp_sl/2].y;
+
+			if (GM->check_point(GM->mapper_point_temp))
+			{
+				printf("Negative point inside the map");
+			}
+			else {
+			printf("izvan mape sick (%f,%f)\n",GM->mapper_point_temp.x, GM->mapper_point_temp.y);
+
+			}
+
+
+		  negative_cell[1].x=GM->cell_point_temp.x;
+		  negative_cell[1].y=GM->cell_point_temp.y;
+
+	//service call
+
+    rvl_psulmdemo::predict_trace srv;
+    srv.request.stateID=0;
+	ros::service::call("predict_trace", srv);
+	int cost1=srv.response.trace_after;
+	srv.request.stateID=temp_sl/2;
+	ros::service::call("predict_trace",srv);
+	int cost2=srv.response.trace_after;
+
+//skalirati trace matrice
+
+	map[negative_cell[0].x][negative_cell[0].y].traversal_cost=cost1;
+	map[negative_cell[1].x][negative_cell[1].y].traversal_cost=cost2;
+}
+}
+//if (negative_cell.x!=-1)
+//  map[negative_cell.x][negative_cell.y].traversal_cost=-100;
+
+if (loop_close_points.size()>1){
+      
+if ((Start - negative_cell[0]==3) && blacklist.size()>0 ){
+
+	map[negative_cell[0].x][negative_cell[0].y].traversal_cost=2;
+	map[negative_cell[1].x][negative_cell[1].y].traversal_cost=2;
+	map[blacklist.back().x][blacklist.back().y].traversal_cost=2;
+	if ( (map[negative_cell[0].x][negative_cell[0].y].tag==CLOSED))// && (map[element.x][element.y].h_cost_int<OBSTACLE) ) //injega
+	    		      {
+
+	    			      insertNode(negative_cell[0],map[negative_cell[0].x][negative_cell[0].y].h_cost_int);
+	    			      insertNode(blacklist.back(),map[blacklist.back().x][blacklist.back().y].h_cost_int);
+	    			      watchdog_counter++;
+	    		      }
+//	    		      negative_cell.x=-1;
+//	    		      negative_cell.y=-1;
+	blacklist.clear();
+}
+
+
+if ((Start - negative_cell[1]==3) && blacklist.size()>0 ){
+
+	map[negative_cell[0].x][negative_cell[0].y].traversal_cost=2;
+	map[negative_cell[1].x][negative_cell[1].y].traversal_cost=2;
+	map[blacklist.back().x][blacklist.back().y].traversal_cost=2;
+	if ( (map[negative_cell[1].x][negative_cell[1].y].tag==CLOSED))// && (map[element.x][element.y].h_cost_int<OBSTACLE) ) //injega
+	    		      {
+
+	    			      insertNode(negative_cell[1],map[negative_cell[1].x][negative_cell[1].y].h_cost_int);
+	    			      insertNode(blacklist.back(),map[blacklist.back().x][blacklist.back().y].h_cost_int);
+	    			      watchdog_counter++;
+	    		      }
+//	    		      negative_cell.x=-1;
+//	    		      negative_cell.y=-1;
+	blacklist.clear();
+}
+
+}
+//blacklist.clear();
 //all changed nodes are inserted    
     
 //tu sam stavila pocetak vremena
@@ -695,7 +1174,7 @@ if (gettimeofday(&timeStart, NULL) == 0)
       }
 
     //exhaustive search 0 instead of 1
-	  if (0&&(!(LESSEQ(f_old,k_old,Robot_f,Robot_h)))&&(prviput==0)&&(Robot_h<OBSTACLE))
+	  if (0 &&(!(LESSEQ(f_old,k_old,Robot_f,Robot_h)))&&(prviput==0)&&(Robot_h<OBSTACLE))
       {
 	      PathExists=true;
         if (gettimeofday(&timeNow, NULL) == 0)
@@ -733,6 +1212,10 @@ if (gettimeofday(&timeStart, NULL) == 0)
 	pipodjednom=false;//tu ga resetiram
 	return true;
 	    }
+
+
+
+
       processState();
       ++watchdog_counter;
       
@@ -745,6 +1228,70 @@ if (gettimeofday(&timeStart, NULL) == 0)
       }
 
     }   //od while
+
+
+
+ if (blacklist.size()>0) {
+	  //adjust costs for blacklist
+
+	    //find the best neighbor pointing to the negative cell
+
+	    int min_cell=map[blacklist.front().x + xofs[0]] [blacklist.front().y + yofs[0]].k_cost_int;
+	    I_point min_cell_around_neg;
+
+	    min_cell_around_neg.x=blacklist.front().x + xofs[0];
+	    min_cell_around_neg.y=(blacklist.front().y + yofs[0]);
+
+	    #ifdef DSTAR_EIGHT_CONNECTED
+	  		for ( int i = 1; i < 8; i++ ) //for all neighbors
+	  #else
+	  		for ( int i = 1; i < 4; i++ ) //for all neighbors
+	  #endif
+
+	  		{
+	  //  for (int i=0;i<8;i++){
+
+	              if (map[blacklist.front().x + xofs[i]] [blacklist.front().y + yofs[i]].k_cost_int<min_cell)
+
+	  	  {
+	  		  min_cell=map[blacklist.front().x + xofs[i]] [blacklist.front().y + yofs[i]].k_cost_int;
+	            min_cell_around_neg.x=blacklist.front().x + xofs[i];
+	            min_cell_around_neg.y=(blacklist.front().y + yofs[i]);
+	  	  }
+
+	    }
+
+
+
+	  		int cost_travel=map[blacklist[0].x][blacklist[0].y].traversal_cost;
+
+	  		if ((blacklist[0].x - min_cell_around_neg.x!=0)  && (blacklist[0].y - min_cell_around_neg.y !=0)) {
+	  			  map[blacklist[0].x] [blacklist[0].y].k_cost_int=min_cell + COSTDIAGONAL*cost_travel;
+	  		      map[blacklist[0].x] [blacklist[0].y].h_cost_int=map[blacklist[0].x] [blacklist[0].y].k_cost_int;
+	  		}
+	  		else{
+	  			map[blacklist[0].x] [blacklist[0].y].k_cost_int=min_cell + COSTSTRAIGHT*cost_travel;;
+	  			map[blacklist[0].x] [blacklist[0].y].h_cost_int=map[blacklist[0].x] [blacklist[0].y].k_cost_int;
+	  		}
+
+	  		for (int i=1; i<blacklist.size();i++) {
+	  			cost_travel=map[blacklist[i].x][blacklist[i].y].traversal_cost;
+
+	  			if ((blacklist[i].x - blacklist[i-1].x!=0)  && (blacklist[i].y - blacklist[i-1].y!=0)) {
+	  	  map[blacklist[i].x] [blacklist[i].y].k_cost_int=map[blacklist[i-1].x] [blacklist[i-1].y].k_cost_int - COSTDIAGONAL*cost_travel;;
+	        map[blacklist[i].x] [blacklist[i].y].h_cost_int=map[blacklist[i].x] [blacklist[i].y].k_cost_int;
+	  		}
+
+	  		else {
+	      	  map[blacklist[i].x] [blacklist[i].y].k_cost_int=map[blacklist[i-1].x] [blacklist[i-1].y].k_cost_int - COSTSTRAIGHT*cost_travel;;
+	      	        map[blacklist[i].x] [blacklist[i].y].h_cost_int=map[blacklist[i].x] [blacklist[i].y].k_cost_int;
+	        }
+	        printf("adjust blacklist (%d,%d) h %d\n",blacklist[i-1].x, blacklist[i-1].y, map[blacklist[i-1].x] [blacklist[i-1].y].k_cost_int);
+	    }
+
+//blacklist.clear();
+
+ }
 
     printf("DStar SearchPath> empty list!!!!\n");
   } 
@@ -796,6 +1343,11 @@ if (gettimeofday(&timeStart, NULL) == 0)
   azurirani=0;
 
   brojac_izracuna++;
+
+
+
+
+
   return true;
 }
 
@@ -1501,10 +2053,51 @@ void DStar::processState() {
 	if (k_val>OBSTACLE) k_val=OBSTACLE+1.;
 	if (f_val>OBSTACLE) f_val=OBSTACLE+1.;
 
+
+
+
+	  //blacklist
+	// if new cell has a negative cost
+
+	if (map[MinCostElemLista.x][MinCostElemLista.y].traversal_cost<0 && (k_val==h_val)){
+			  //generate blacklist
+		I_point element;
+		element=MinCostElemLista;
+
+		blacklist.push_back(MinCostElemLista); // push negative cell to the blacklist
+
+	//add on the list path from the negative cell to the goal
+		while  ( (element.x!=Goal.x || element.y!=Goal.y) &&  map[element.x][element.y].k_cost_int == map[element.x][element.y].h_cost_int )
+		{
+
+			if (map[element.x][element.y]._next.x!=-1 && map[element.x][element.y]._next.y!=-1)
+			{
+				element=map[element.x][element.y]._next;
+        printf("blacklist element %d %d\n",element.x,element.y);
+		    if (!(std::find(blacklist.begin(), blacklist.end(), element)==blacklist.end() && !(element==blacklist.back()) )){
+		      printf("blacklist ponavljanje elementa!\n");
+		      break;
+		    }
+		    blacklist.push_back(element);   // push elements on a blacklist
+ 			}
+			else
+			{
+				std::cout << "pointer with forbidden value" << std::endl;
+			}
+
+		  }
+	}
+
+
+
+
+
+
+
 	// RAISE STANJE
-	if (k_val < h_val)//tu najbolji nije prepreka
+	if (1 || (k_val < h_val) )//tu najbolji nije prepreka
 	{
-		printf("raise\n");
+		//printf("raise");
 #ifdef DSTAR_EIGHT_CONNECTED 
 		for ( int d = 0; d < 8; d++ ) //for all neighbors
 #else
@@ -1531,8 +2124,14 @@ void DStar::processState() {
 
         //postavljen cost c izmedju najboljeg stanja i susjeda
         arc_cost( point.x, point.y, MinCostElemLista.x, MinCostElemLista.y);
-	if ( (map[point.x][point.y].tag!=NEW) && (LESSEQ(f_point, h_point, f_val, k_val)) && (h_val > h_point + c*travCost[d])&& (c<OBSTACLE)&& ((h_point<OBSTACLE)||(h_val<OBSTACLE)))// 
-		{
+	if ( (map[point.x][point.y].tag!=NEW) && (LESSEQ(f_point, h_point, f_val, k_val))
+			&& (h_val > h_point + c*travCost[d])&& (c<OBSTACLE)&& ((h_point<OBSTACLE)||(h_val<OBSTACLE))
+			&& (std::find(blacklist.begin(), blacklist.end(), point)==blacklist.end() && !(point==blacklist.back()) )
+			&& (map[point.x][point.y].traversal_cost>=0)
+			)//
+
+
+	{
 
 		  
 
@@ -1573,8 +2172,10 @@ void DStar::processState() {
 
 //postavljen cost c izmedju najboljeg stanja i susjeda
 	arc_cost( MinCostElemLista.x, MinCostElemLista.y, point.x, point.y);//prvi nadodani uvjet je da ne ode u dedend bezveze
-	if ( ((map[point.x][point.y].tag==NEW)&&(0||c<OBSTACLE)&&(0||h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next.x == MinCostElemLista.x) && (map[point.x][point.y]._next.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && (1||(h_point<OBSTACLE)||(h_val<OBSTACLE)) && (1||(h_point<OBSTACLE)||(c<OBSTACLE))) || ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE))) )
-		{
+	if ( ((std::find(blacklist.begin(), blacklist.end(), point)==blacklist.end() && !(point==blacklist.back()) ))
+	  && ( ((map[point.x][point.y].tag==NEW)&&(0||c<OBSTACLE)&&(0||h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next.x == MinCostElemLista.x) && (map[point.x][point.y]._next.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && (1||(h_point<OBSTACLE)||(h_val<OBSTACLE)) && (1||(h_point<OBSTACLE)||(c<OBSTACLE))) || ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE))))
+	)
+	{
 			if ((h_val>OBSTACLE)&&(k_val>OBSTACLE)){
 				printf("fat LOWER h_val=%d k_val=%d c*travCost[%d]=%d\n",h_val,k_val,d,c*travCost[d]);
 				pipodjednom=true;
@@ -1620,30 +2221,36 @@ void DStar::processState() {
 
         //postavlja c za prijelaz izmedju susjeda i najboljeg
         arc_cost( MinCostElemLista.x, MinCostElemLista.y, point.x, point.y);
-	if ( ((map[point.x][point.y].tag==NEW)&&(0||c<OBSTACLE)&&(0||h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next.x == MinCostElemLista.x) && (map[point.x][point.y]._next.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && (1||(h_point<OBSTACLE)||(h_val<OBSTACLE)) && (1||(h_point<OBSTACLE)||(c<OBSTACLE))) )
-		{
+	if ( ((std::find(blacklist.begin(), blacklist.end(), point)==blacklist.end() && !(point==blacklist.back()) ))
+	   && ( ((map[point.x][point.y].tag==NEW)&&(0||c<OBSTACLE)&&(0||h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next.x == MinCostElemLista.x) && (map[point.x][point.y]._next.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && (1||(h_point<OBSTACLE)||(h_val<OBSTACLE)) && (1||(h_point<OBSTACLE)||(c<OBSTACLE))) )
+	)
+	{
 
 			map[point.x][point.y]._next.x = MinCostElemLista.x;
 					map[point.x][point.y]._next.y = MinCostElemLista.y;
 					insertNode(point, h_val + c*travCost[d]);
-					printf("opet raise obradjen\n");
+					//printf("opet raise obradjen");
 		}
 		else
         {
-		if ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && (map[MinCostElemLista.x][MinCostElemLista.y].tag == CLOSED))
-		 {
+		if ( ((std::find(blacklist.begin(), blacklist.end(), MinCostElemLista)==blacklist.end() && !(MinCostElemLista==blacklist.back()) ))
+			&& ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && (map[MinCostElemLista.x][MinCostElemLista.y].tag == CLOSED))
+		 )
+				{
 
 			 insertNode(MinCostElemLista, h_val);
-	    printf("opet raise obradjen\n");
+	    //printf("opet raise obradjen");
 		 }
 		else
         {
         arc_cost( point.x,point.y,MinCostElemLista.x, MinCostElemLista.y);
-		if ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_val > h_point + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && (map[point.x][point.y].tag == CLOSED) && LESS(f_val, k_val, f_point, h_point))
-              {
+		if ( ((std::find(blacklist.begin(), blacklist.end(), point)==blacklist.end() && !(point==blacklist.back()) ))
+		   && ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_val > h_point + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && (map[point.x][point.y].tag == CLOSED) && LESS(f_val, k_val, f_point, h_point))
+        )
+		{
 
 		      insertNode(point, h_point);
-          printf("opet raise obradjen\n");
+
 	      }
           }
 			  } //else
@@ -2147,416 +2754,8 @@ void    DStar::insertNodeReverse( I_point element, int h_new )
 #endif
 }
 
-//determing the real time for turn and translation
-double DStar::exitRotationReal(double w0, double theta, double wmax, double dwmax, double dt){
-  
-  double min_num_steps=10000., num_steps;
-  int Nu, Nd;
-  double theta_plus, theta_minus, fiu, fid, fiu_, N1, N2, N, Ns;
-  bool maxspeed;
 
-  if (theta>0 && theta<=2*M_PI){
-      theta_plus=theta;
-      theta_minus=theta-2*M_PI;
-  }else if (theta<=0 && theta>=-2*M_PI){
-      theta_plus=theta+2*M_PI;
-      theta_minus=theta;
-  }
 
-//theta_plus
-  Nu=ceil((wmax-w0)/dwmax);
-  Nd=ceil(wmax/dwmax);
-
-  fiu=(Nu+1)/2.*(w0+wmax)*dt;
-  fid=(Nd+1)/2.*(wmax)*dt;
-
-  if ((theta_plus-fiu-fid)>0){
-      maxspeed=true;
-  }else {
-      maxspeed=false;
-  }
-
-  if (maxspeed) {
-      Ns=((theta_plus-fiu-fid)/(wmax*dt));
-      num_steps=Nu+Ns+Nd+1;
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-  if (!maxspeed){
-      Nd=ceil(fabs(w0)/dwmax);
-      fid=(Nd+1)/2.*w0*dt;
-      fiu_=theta_plus-fid;
-      if (fiu_>0) {
-          if (w0<0) {
-              N1=sqrt(fiu_/dt/dwmax);
-              N2=-N1;
-          } else {
-              N1=(-2*w0+sqrt(4*w0*w0+4*dwmax*(fiu_)/dt))/(2*dwmax);
-              N2=(-2*w0-sqrt(4*w0*w0+4*dwmax*(fiu_)/dt))/(2*dwmax);
-          }
-      } else {
-          N1=sqrt(fiu_/dt/(-dwmax));
-          N2=-N1;
-      }
-
-      if (std::min(N1,N2)<0){
-          N=std::max(N1,N2);
-      } else {
-          N=std::min(N1,N2);
-      }
-
-      num_steps=N+N-1+Nd+1;
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-// theta_minus (opposite direction)
-  Nu=ceil(fabs(-wmax-w0)/dwmax);
-  Nd=ceil(wmax/dwmax);
-
-  fiu=(Nu+1)/2.*(w0-wmax)*dt;
-  fid=(Nd+1)/2.*(-wmax)*dt;
-
-  if ((theta_minus-fiu-fid)<0){
-      maxspeed=true;
-  }else {
-      maxspeed=false;
-  }
-
-  if (maxspeed) {
-      Ns=((theta_minus-fiu-fid)/(-wmax*dt));
-      num_steps=Nu+Ns+Nd+1;
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-  if (!maxspeed){
-      Nd=ceil(fabs(w0)/dwmax);
-      fid=(Nd+1)/2.*w0*dt;
-      fiu_=theta_minus-fid;
-      if (fiu_<0) {
-          if (w0>0) {
-              N1=sqrt(fiu_/dt/(-dwmax));
-              N2=-N1;
-          } else {
-              N1=(2*w0-sqrt(4*w0*w0-4*dwmax*(fiu_)/dt))/(2*dwmax);
-              N2=(2*w0+sqrt(4*w0*w0-4*dwmax*(fiu_)/dt))/(2*dwmax);
-          }
-      } else {
-          N1=sqrt(fiu_/dt/(dwmax));
-          N2=-N1;
-      }
-
-      if (std::min(N1,N2)<0){
-          N=std::max(N1,N2);
-      } else {
-          N=std::min(N1,N2);
-      }
-
-      num_steps=N+N-1+Nd+1;
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-  return min_num_steps;
-}
-
-double DStar::exitTranslationReal(double v0, double distance, double vmax, double dvmax, double dt){
-
-  double min_num_steps=10000., num_steps;
-  int Nu, Nd;
-  double fiu, fid, fiu_, N, N1, N2, Ns;
-  bool maxspeed;
-
-  Nu=ceil((vmax-v0)/dvmax);
-  Nd=ceil(vmax/dvmax);
-
-  fiu=(Nu+1)/2.*(v0+vmax)*dt;
-  fid=(Nd+1)/2.*(vmax)*dt;
-
-  if ((distance-fiu-fid)>0){
-      maxspeed=true;
-  }else {
-      maxspeed=false;
-  }
-
-  if (maxspeed) {
-      Ns=((distance-fiu-fid)/(vmax*dt));
-      num_steps=Nu+Ns+Nd+1;
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-  if (!maxspeed){
-      Nd=ceil(v0/dvmax);
-      fid=(Nd+1)/2.*v0*dt;
-      fiu_=distance-fid;
-      if (fiu_>0) {
-          N1=(-2*v0+sqrt(4*v0*v0+4*dvmax*(fiu_)/dt))/(2*dvmax);
-          N2=(-2*v0-sqrt(4*v0*v0+4*dvmax*(fiu_)/dt))/(2*dvmax);
-      } else {
-          N1=0;
-          N2=-N1;
-      }
-
-      if (std::min(N1,N2)<0){
-          N=std::max(N1,N2);
-      } else {
-          N=std::min(N1,N2);
-      }
-
-      num_steps=N+N-1+Nd+1;
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-  return min_num_steps;
-
-}
-
-//determing the number of steps (discrete time) for turn and translation
-int DStar::exitRotation(double w0, double theta, double wmax, double dwmax, double dt){
-  
-  int min_num_steps=10000, num_steps;
-  int Nu, Nd, Ns;
-  double theta_plus, theta_minus, fiu, fid, fis, fid_, fiu_, w1, N1, N2, N;
-  bool maxspeed;
-
-  if (theta>0 && theta<=2*M_PI){
-      theta_plus=theta;
-      theta_minus=theta-2*M_PI;
-  }else if (theta<=0 && theta>=-2*M_PI){
-      theta_plus=theta+2*M_PI;
-      theta_minus=theta;
-  }
-
-//theta_plus
-  Nu=ceil((wmax-w0)/dwmax);
-  Nd=ceil(wmax/dwmax);
-
-  fiu=(Nu+1)/2.*(w0+wmax)*dt;
-  fid=(Nd+1)/2.*(wmax)*dt;
-
-  if ((theta_plus-fiu-fid)>0){
-      maxspeed=true;
-  }else {
-      maxspeed=false;
-  }
-
-  if (maxspeed) {
-      Ns=floor((theta_plus-fiu-fid)/(wmax*dt));
-      fis=Ns*wmax*dt;
-      fid_=theta_plus-fiu-fis;
-      w1=(fid_-fid)/dt;
-      if (w1==0){
-          num_steps=Nu+Ns+Nd+1;
-      } else {
-          num_steps=Nu+Ns+Nd+1+1;
-      }
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-  if (!maxspeed){
-      Nd=ceil(fabs(w0)/dwmax);
-      fid=(Nd+1)/2.*w0*dt;
-      fiu_=theta_plus-fid;
-      if (fiu_>0) {
-          if (w0<0) {
-              N1=sqrt(fiu_/dt/dwmax);
-              N2=-N1;
-          } else {
-              N1=(-2*w0+sqrt(4*w0*w0+4*dwmax*(fiu_)/dt))/(2*dwmax);
-              N2=(-2*w0-sqrt(4*w0*w0+4*dwmax*(fiu_)/dt))/(2*dwmax);
-          }
-      } else {
-          N1=sqrt(fiu_/dt/(-dwmax));
-          N2=-N1;
-      }
-
-      if (std::min(N1,N2)<0){
-          N=std::max(N1,N2);
-      } else {
-          N=std::min(N1,N2);
-      }
-
-      Nu=floor(N);
-      if (w0<0) {
-          fiu=(Nu*Nu*dwmax)*dt;
-      } else {
-          fiu=(Nu*Nu*dwmax+2*Nu*w0)*dt;
-      }
-      if (fiu_<0) {
-          fiu=-Nu*Nu*dwmax*dt;
-      }
-      w1=(fiu_-fiu)/dt;
-      if (w1==0) {
-          num_steps=Nu+Nu-1+Nd+1;
-      } else {
-          num_steps=Nu+Nu-1+Nd+1+1;
-      }
-      if ((w0<0 && w1>(Nu)*dwmax) || (w0>=0 && w1>(Nu)*dwmax+w0) || (w0>0 && w1<(-1)*(Nu)*dwmax)) {
-          num_steps += 1;
-      }
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-// theta_minus (opposite direction)
-  Nu=ceil(fabs(-wmax-w0)/dwmax);
-  Nd=ceil(wmax/dwmax);
-
-  fiu=(Nu+1)/2.*(w0-wmax)*dt;
-  fid=(Nd+1)/2.*(-wmax)*dt;
-
-  if ((theta_minus-fiu-fid)<0){
-      maxspeed=true;
-  }else {
-      maxspeed=false;
-  }
-
-  if (maxspeed) {
-      Ns=floor((theta_minus-fiu-fid)/(-wmax*dt));
-      fis=Ns*wmax*dt*(-1);
-      fid_=theta_minus-fiu-fis;
-      w1=(fid_-fid)/dt;
-      if (w1==0){
-          num_steps=Nu+Ns+Nd+1;
-      } else {
-          num_steps=Nu+Ns+Nd+1+1;
-      }
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-  if (!maxspeed){
-      Nd=ceil(fabs(w0)/dwmax);
-      fid=(Nd+1)/2.*w0*dt;
-      fiu_=theta_minus-fid;
-      if (fiu_<0) {
-          if (w0>0) {
-              N1=sqrt(fiu_/dt/(-dwmax));
-              N2=-N1;
-          } else {
-              N1=(2*w0-sqrt(4*w0*w0-4*dwmax*(fiu_)/dt))/(2*dwmax);
-              N2=(2*w0+sqrt(4*w0*w0-4*dwmax*(fiu_)/dt))/(2*dwmax);
-          }
-      } else {
-          N1=sqrt(fiu_/dt/(dwmax));
-          N2=-N1;
-      }
-
-      if (std::min(N1,N2)<0){
-          N=std::max(N1,N2);
-      } else {
-          N=std::min(N1,N2);
-      }
-
-      Nu=floor(N);
-      if (w0>0) {
-          fiu=(-Nu*Nu*dwmax)*dt;
-      } else {
-          fiu=(-Nu*Nu*dwmax+2*Nu*w0)*dt;
-      }
-      if (fiu_>0) {
-          fiu=Nu*Nu*dwmax*dt;
-      }
-      w1=(fiu_-fiu)/dt;
-      if (w1==0) {
-          num_steps=Nu+Nu-1+Nd+1;
-      } else {
-          num_steps=Nu+Nu-1+Nd+1+1;
-      }
-      if ((w0>0 && w1<(-Nu)*dwmax) || (w0<=0 && w1<(-Nu)*dwmax+w0) || (w0<0 && w1>Nu*dwmax)) {
-          num_steps += 1;
-      }
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-  return min_num_steps;
-}
-
-int DStar::exitTranslation(double v0, double distance, double vmax, double dvmax, double dt){
-
-  int min_num_steps=10000, num_steps;
-  int Nu, Nd, Ns;
-  double fiu, fid, fis, fid_, fiu_, v1, N, N1, N2;
-  bool maxspeed;
-
-  Nu=ceil((vmax-v0)/dvmax);
-  Nd=ceil(vmax/dvmax);
-
-  fiu=(Nu+1)/2.*(v0+vmax)*dt;
-  fid=(Nd+1)/2.*(vmax)*dt;
-
-  if ((distance-fiu-fid)>0){
-      maxspeed=true;
-  }else {
-      maxspeed=false;
-  }
-
-  if (maxspeed) {
-      Ns=floor((distance-fiu-fid)/(vmax*dt));
-      fis=Ns*vmax*dt;
-      fid_=distance-fiu-fis;
-      v1=(fid_-fid)/dt;
-      if (v1<=0){
-          num_steps=Nu+Ns+Nd+1;
-      } else {
-          num_steps=Nu+Ns+Nd+1+1;
-      }
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-  if (!maxspeed){
-      Nd=ceil(v0/dvmax);
-      fid=(Nd+1)/2.*v0*dt;
-      fiu_=distance-fid;
-      if (fiu_>0) {
-          N1=(-2*v0+sqrt(4*v0*v0+4*dvmax*(fiu_)/dt))/(2*dvmax);
-          N2=(-2*v0-sqrt(4*v0*v0+4*dvmax*(fiu_)/dt))/(2*dvmax);
-      } else {
-          N1=0;
-          N2=-N1;
-      }
-
-      if (std::min(N1,N2)<0){
-          N=std::max(N1,N2);
-      } else {
-          N=std::min(N1,N2);
-      }
-
-      Nu=floor(N);
-      fiu=(Nu*Nu*dvmax+2*Nu*v0)*dt;
-      v1=(fiu_-fiu)/dt;
-      if (v1<=0) {
-          num_steps=Nu+Nu-1+Nd+1;
-      } else {
-          num_steps=Nu+Nu-1+Nd+1+1;
-      }
-      if (v0>=0 && v1>(Nu)*dvmax+v0) {
-          num_steps += 1;
-      }
-      if (num_steps<min_num_steps){
-          min_num_steps=num_steps;
-      }
-  }
-
-  return min_num_steps;
-
-}
 
 int DStar::numCellsFromXtoG(I_point X){
 
@@ -2566,49 +2765,52 @@ int DStar::numCellsFromXtoG(I_point X){
   I_point findloop[10];
   while((temp1.x!=Goal.x)||(temp1.y!=Goal.y))
   {
-	  if ( IsValid( temp1.x, temp1.y )!=1 )
-	  {
-		  printf("DStar> out of map or obstacle!!! temp1.x=%d, temp1.y=%d, Start.x=%d, Start.y=%d\n", temp1.x,temp1.y,Start.x,Start.y);
-		  printf("DStar> Map dimensions: MapSizeX=%d, MapSizeY=%d\n", MapSizeX, MapSizeY);
-		  break;
-	  }
-	  else
-	  {
-		  temp2.x=map[temp1.x][temp1.y]._next.x;
-		  temp2.y=map[temp1.x][temp1.y]._next.y;
-		  if ((temp2.x==-1)||(temp2.y==-1)) {
-			  printf("no next\n");
-			  break;
-		  }
-		  findloop[(length % 10)].x=temp1.x;
-		  findloop[(length % 10)].y=temp1.y;
-		  for (int i=0;i<std::min(length,10);i++){
-			  if ((temp2.x==findloop[i].x)&&(temp2.y==findloop[i].y)){
-				  printf("loop in the path! path length %d, temp2 = (%d,%d)\n",length, temp2.x, temp2.y);
-				  loopdet=1;
-				  break;
-			  }
-		  }
-		  if (loopdet==1)
-			  break;
-		  temp1.x=temp2.x;
-		  temp1.y=temp2.y;
-		  length++;
-		  if (length>MapSizeX*MapSizeY)
-		  {
-			  printf("loop! time_stamp_counter=%d\n",time_stamp_counter);
-			  break;
-		  }
-	  }
+ if ( IsValid( temp1.x, temp1.y )!=1 )
+ {
+ printf("DStar> out of map or obstacle!!! temp1.x=%d, temp1.y=%d, Start.x=%d, Start.y=%d\n", temp1.x,temp1.y,Start.x,Start.y);
+ printf("DStar> Map dimensions: MapSizeX=%d, MapSizeY=%d\n", MapSizeX, MapSizeY);
+ break;
+ }
+ else
+ {
+ temp2.x=map[temp1.x][temp1.y]._next.x;
+ temp2.y=map[temp1.x][temp1.y]._next.y;
+ if ((temp2.x==-1)||(temp2.y==-1)) {
+ printf("no next\n");
+ break;
+ }
+ findloop[(length % 10)].x=temp1.x;
+ findloop[(length % 10)].y=temp1.y;
+ for (int i=0;i<std::min(length,10);i++){
+ if ((temp2.x==findloop[i].x)&&(temp2.y==findloop[i].y)){
+ printf("loop in the path! path length %d, temp2 = (%d,%d)\n",length, temp2.x, temp2.y);
+ loopdet=1;
+ break;
+ }
+ }
+ if (loopdet==1)
+ break;
+ temp1.x=temp2.x;
+ temp1.y=temp2.y;
+ length++;
+ if (length>MapSizeX*MapSizeY)
+ {
+ printf("loop! time_stamp_counter=%d\n",time_stamp_counter);
+ break;
+ }
+ }
   }
   return length;
 }
+
+
 
 //POSTAVLJANJE COSTOVA PRIJELAZA IZ STANJA Y U X
       //zadnja verzija---c(x,y)=c(y,x) i to veci broj uvijek gledano iz cost mape
 void DStar::arc_cost(int X_cell_x, int X_cell_y, int Y_cell_x, int Y_cell_y)
 {
-  c = std::max(map[ X_cell_x ][ X_cell_y ].traversal_cost, map[Y_cell_x ][ Y_cell_y ].traversal_cost); 
+  c=map[ X_cell_x ][ X_cell_y ].traversal_cost;
+	//c = std::max(map[ X_cell_x ][ X_cell_y ].traversal_cost, map[Y_cell_x ][ Y_cell_y ].traversal_cost);
 //  c = (map[ X_cell_x ][ X_cell_y ].traversal_cost, map[Y_cell_x ][ Y_cell_y ].traversal_cost)/2; //no nice interpolation properties, it must be max
   if ((map[ X_cell_x ][ X_cell_y ].cspace_occupied==true)||(map[Y_cell_x ][ Y_cell_y ].cspace_occupied==true)||(map[ X_cell_x ][ X_cell_y ].prepreka_bool==true)||(map[Y_cell_x ][ Y_cell_y ].prepreka_bool==true)){
   	c=OBSTACLE;
@@ -2616,75 +2818,6 @@ void DStar::arc_cost(int X_cell_x, int X_cell_y, int Y_cell_x, int Y_cell_y)
 #if NO_COSTMASK
 	if (c<OBSTACLE)
 		c=EMPTYC;
-#endif
-#if TAU_SEARCH
-  double translation, rotation, angle_next, angle_XY, delta;
-  int num_turn, num_translate;
-  I_point next_cell;
-  translation = ((X_cell_x-Y_cell_x)*(X_cell_x-Y_cell_x) + (X_cell_y-Y_cell_y)*(X_cell_y-Y_cell_y));
-  if (translation != 1){
-    translation = sqrt(translation);
-  }
-  next_cell = map[ X_cell_x ][ X_cell_y ]._next;
-  if ((next_cell.x != -1) || (next_cell.y != -1)){
-    if (next_cell.y==X_cell_y){
-      if (next_cell.x-X_cell_x < 0){
-        angle_next = M_PI;
-      }else{
-        angle_next = 0;
-      }
-    }else if (next_cell.x==X_cell_x){
-      if (next_cell.y-X_cell_y < 0){
-        angle_next = -M_PI/2.;
-      }else{
-        angle_next = M_PI/2.;
-      }
-    }
-    if (angle_next != atan2((next_cell.y-X_cell_y),(next_cell.x-X_cell_x))){
-      printf("angle_next = %f\n", angle_next);
-    }
-  }else{
-    angle_next = goal_orientation;
-  }
-  if (Y_cell_y==X_cell_y){
-    if (X_cell_x-Y_cell_x < 0){
-      angle_XY = M_PI;
-    }else{
-      angle_XY = 0;
-    }
-  }else if (Y_cell_x==X_cell_x){
-    if (X_cell_y-Y_cell_y < 0){
-      angle_XY = -M_PI/2.;
-    }else{
-      angle_XY = M_PI/2.;
-    }
-  }
-  if (angle_XY != atan2((X_cell_y-Y_cell_y),(X_cell_x-Y_cell_x))){
-    printf("angle_XY = %f\n", angle_XY);
-  }
-  delta=fabs(angle_XY-angle_next);
-  while (delta>M_PI){
-    delta=fabs(delta-2*M_PI);
-  }
-  if (delta<0.000001 && delta!=0){
-    printf("delta=%f\n", delta*180/M_PI);
-  }
-#if TAU_OPT
-  num_turn=exitRotation(0, delta, W_MAX, DW_MAX*STEP, STEP);
-  num_translate=exitTranslation(0, translation*CELL_DIM, V_MAX, DV_MAX*STEP, STEP);
-//  printf("num_turn=%d, num_translate=%d, c=%d\n", num_turn, num_translate, c);
-  if (c<OBSTACLE){
-    c = c * (num_turn + num_translate);
-  }
-//  printf("c=%d\n", c);
-#else  
-  translation = ceil(translation*CELL_DIM/STEP/STEP/DV_MAX);
-  rotation = ceil(delta/STEP/STEP/DW_MAX);
-  if (c<OBSTACLE){
-    c = c* (int) (translation + rotation);
-  }
-//  printf("translation=%f, rotation=%f, c=%d\n", translation, rotation, c);
-#endif
 #endif
 }
 
@@ -3269,6 +3402,7 @@ void DStar::Free()
 
 void DStar::reset()
 {
+	blacklist.clear();
 	dcurr=0; //odmak od startne pozicije tijekom voznje
 // 	brojac_izracuna=0;
 	brojac_izracunaWitkowski=0;oznakaZaCrtanje=0;

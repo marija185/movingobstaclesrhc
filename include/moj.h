@@ -17,6 +17,7 @@
 #include "nav_msgs/Odometry.h"
 //#include "nav_msgs/OccupancyGrid.h"
 #include "nav_msgs/GetMap.h"
+#include "nav_msgs/Path.h"
 #include "std_msgs/Float64.h"
 #include<geometry_msgs/PoseStamped.h>
 //#include <boost/bind.hpp>
@@ -298,6 +299,7 @@ double robotX, robotY,robotTH,robotW,robotV;
   ros::Publisher moving_pub;
   ros::Publisher active_pub;
   ros::Subscriber moving_sub;
+  ros::Subscriber slam_points;
   ros::ServiceServer service;
   ros::ServiceClient client,client_augment;
   ros::Subscriber set_goal;
@@ -360,6 +362,7 @@ double robotX, robotY,robotTH,robotW,robotV;
 	set_goal=nh_.subscribe("/move_base_simple/goal",1,&GenericLaserScanFilterNode::simple_goal,this); 
 	goal_status=nh_.advertise<actionlib_msgs::GoalStatus>("/goal_status",1); 
   moving_sub = nh_.subscribe("movingRobot0", 1, &GenericLaserScanFilterNode::movingRobot0Callback, this);
+  slam_points = nh_.subscribe("/slam/trajectory", 1, &GenericLaserScanFilterNode::slamPose, this);
 	vel_pub=nh_.advertise<geometry_msgs::Twist>(cmd_vel_topic_, 1); //samo cmd_vel /husky/cmd_vel
   moving_pub = nh_.advertise<movingobstaclesrhc::Moving>("movingRobot1",1);
   service = nh_.advertiseService("request_stop", &GenericLaserScanFilterNode::ReqRobotStop,this);
@@ -395,6 +398,7 @@ double robotX, robotY,robotTH,robotW,robotV;
   void odomCallback(const nav_msgs::OdometryConstPtr& odom);
   void globalposeCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
   void movingRobot0Callback(const movingobstaclesrhc::MovingConstPtr& robot0Msg);
+  void slamPose(const nav_msgs::PathConstPtr& msg);
   void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
   void laserRearCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
   bool ReqRobotStop(movingobstaclesrhc::ReqRobStop::Request &req, movingobstaclesrhc::ReqRobStop::Response &res);

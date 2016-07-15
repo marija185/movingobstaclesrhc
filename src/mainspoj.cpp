@@ -29,6 +29,10 @@ extern Planner *PL;
 CSpaceVoronoi *cspace;
 #endif
 
+//extern std::vector <slam_po> loop_close_points;
+
+
+
 double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY_MAX, W_MAX, W_MIN, DW_MAX;
 
 void VisualizationPublisher::visualizationduringmotion(){
@@ -464,6 +468,19 @@ void GenericLaserScanFilterNode::movingRobot0Callback(const movingobstaclesrhc::
 	robotTH = robot0Msg->th;
 	robotW = robot0Msg->w;
 	robotV = robot0Msg->v;
+	ROS_INFO("\n\n\n\n\n\nPRIMIO SAM OD ROBOTA1 NJEGOVU X: %f \n\n\n\n\n\n",robotX);
+}
+
+void GenericLaserScanFilterNode::slamPose(const nav_msgs::PathConstPtr& msg)
+{
+	//read last point and write it to loop_close_points vector
+	DS->loop_close_points.clear();
+    celija pom;
+	for(int i=0;i<msg->poses.size();i++){
+	            pom.x = msg->poses[i].pose.position.x/1000;
+	            pom.y = msg->poses[i].pose.position.y/1000;
+	            DS->loop_close_points.push_back(pom);
+	        }
 	ROS_INFO("\n\n\n\n\n\nPRIMIO SAM OD ROBOTA1 NJEGOVU X: %f \n\n\n\n\n\n",robotX);
 }
 
@@ -1019,8 +1036,13 @@ void moj::gotogoal(R_point newgoal){
         printf("Planner> Goal is out of the map borders!\n");
 
      }
-
-
+  //DS->negative_cell.x=newgoal_i.x-30;
+  //DS->negative_cell.y=newgoal_i.y+20;
+  /*DS->negative_cell[0].x=100;
+  DS->negative_cell[0].y=150;
+  DS->negative_cell[1].x=125;
+  DS->negative_cell[1].y=170;
+*/
 
 
   goal=newgoal;
@@ -1097,13 +1119,13 @@ maporiginx=map.response.map.info.origin.position.x;
 maporiginy=map.response.map.info.origin.position.y;
 
   WH->LoadInit(mapwidth, mapheight, mapresolution, maporiginx, maporiginy);//konstrukcija sveg (navigacijski modul)
-  
-  
 #else
 
 // nacin ucitavanja prazne mape preko parametara
-  mapwidth=20.;
-  mapheight=20.;
+  mapwidth=30;
+  mapheight=30;
+  maporiginx=-mapwidth/2.;
+  maporiginy=-mapheight/2.;
   nh_.getParam("/spoj/map_width", mapwidth);
   nh_.getParam("/spoj/map_height", mapheight);
   nh_.getParam("/spoj/map_originx", maporiginx);
@@ -1112,10 +1134,11 @@ maporiginy=map.response.map.info.origin.position.y;
     ROS_INFO("map height is %f m", mapheight);
 //    mapwidth+=2.;
 //    mapheight+=2.;
-  maporiginx=-mapwidth/2.;
-  maporiginy=-mapheight/2.;
+
     if (maporiginx<-mapwidth+1. || maporiginx>-1.) maporiginx=-mapwidth/2;
     if (maporiginy<-mapheight+1. || maporiginy>-1.) maporiginy=-mapheight/2;
+  maporiginx=0;
+  maporiginy=0;
     ROS_INFO("map originx is %f m", maporiginx);
     ROS_INFO("map originy is %f m", maporiginy);
     

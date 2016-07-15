@@ -134,7 +134,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //reading from the world line file (wld) or from map (png)
 #define READWLD 0
 //reading from the map topic (png) or parameters
-#define LOADMAP 1
+#define LOADMAP 0
 #define PRAZAN 1
 #if (PRAZAN==1)
 #define WORLD "karta/rectangularemptymap.wld"

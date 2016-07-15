@@ -1,0 +1,41 @@
+<launch>
+  <!--master auto="start"/-->
+  <param name="/use_sim_time" value="true"/>
+
+
+
+
+<node name="map_server" pkg="map_server" type="map_server" args="$(find mapsforsimulatorstage)/galerija.yaml" respawn="false" >
+<param name="frame_id" value="/map" />
+</node>
+
+<node pkg="stage_ros" type="stageros" name="stageros" args="$(find mapsforsimulatorstage)/galerijamapstage.world" respawn="false" >
+    <param name="base_watchdog_timeout" value="0.2"/>
+</node>
+<!--include file="$(find movingobstaclesrhc)/launch/amcl_corridor.launch" /-->
+
+<include file="$(find movingobstaclesrhc)/launch/gmappingsim.launch" />
+
+<!-- running the navigation 
+    <node name="spoj" pkg="movingobstaclesrhc" type="spoj">
+        <param name="base_frame" value="base_link" />
+        <param name="odom_topic" value="/odom" />
+        <param name="scan_topic" value="/base_scan" />
+        <param name="cmd_vel_topic" value="cmd_vel" />
+        <param name="sick_angular_offset" type="double" value="0" />
+        <param name="vx_min" type="double" value="0" />
+        <param name="vx_max" type="double" value="750." />
+        <param name="dvx_max" type="double" value="300." />
+        <param name="w_min" type="double" value="-50." />
+        <param name="w_max" type="double" value="50." />
+        <param name="dw_max" type="double" value="70." />
+    </node>
+    
+-->
+
+
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find movingobstaclesrhc)/dodichsim.rviz" /> 
+
+</launch>
+

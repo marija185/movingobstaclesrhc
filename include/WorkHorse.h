@@ -9,6 +9,10 @@
 #include "Planner.h" //za R_point
 #include "Params.h" //za includove malloc stdio...
 #include <sys/time.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
 //vremena izracuna cijelog algoritma i  vremena svakog kraja algoritma mjerena od samog pocetka stanja RUNNINGu
 #define WH_VREMENA			"logger//vremena_cijelog_algoritma.dat"  
 #define WIT_PUT_I_SKUPINE_VREMENA	"logger//wit_put_i_skupine_vremena.dat"
@@ -310,6 +314,7 @@ public:
   int Logger_Realloc(); //realokacija
   void LogCurrent(int process_increment);  //zapisivanje u svakom ciklusu potrebnih podataka u polje logera
   void Logger(); //zapisivanje u datoteke
+  void Logmeasure(int indeks_ocitanja);
   void OslobodiMemoriju();   //oslobadjanje polja logera
   void Ucitaj_stanje_lasera();
   void Ucitaj_stanje_odometrije();

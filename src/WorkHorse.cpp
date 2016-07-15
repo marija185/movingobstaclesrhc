@@ -4,14 +4,19 @@
 #include "DStar.h"    //Params.h Planner
 #include "moj.h" //Planner.h, Params.h, DStar.h
 
-
-
 DynamicWindow *DW;
 Planner *PL;
 GridMap *GM;
 extern moj *M;
 DStar   *DS;
 
+using namespace std;
+string IntToString ( int number )
+{
+ostringstream oss;
+oss<< number;
+return oss.str();
+}	 
 
 double* reallociraj_double(double *array, int new_size, bool first)
 {
@@ -1691,6 +1696,79 @@ double WorkHorse::Globalna_u_lokalnu_y(double Rx, double Ry, double Rth, double 
 	return lokalnaY;
 }
 
+void WorkHorse::Logmeasure(int indeks_ocitanja){
+	FILE *F1, *F2;
+	double x_temp,y_temp,th_temp;
+  int logsizes=logger_sizes[0];
+	string podaci1 = "./Nocitanja/podaci"+IntToString(indeks_ocitanja);
+	string podaci2 = "./Nocitanja/podacisick"+IntToString(indeks_ocitanja);
+	string podaci3 = "./Nocitanja/podacitraj"+IntToString(indeks_ocitanja);
+	string poz1="./Nocitanja/pozicija"+IntToString(indeks_ocitanja);
+	ofstream file_op(podaci1.c_str());
+	if( !file_op.is_open() )
+	{
+		cout << "Ne mogu otvoriti datoteku\n";
+		return;
+	}       
+		for(int i=0;i<M->LB2.scan_count;i++){
+			//x_temp=(LB.LB_pose[i]).x;
+			//y_temp=(LB.LB_pose[i]).y;
+			x_temp=M->LB2.point[i].x;
+			y_temp=M->LB2.point[i].y;
+//			x_temp=Lokalna_u_globalnu_x(RB.x, RB.th,M->LB2.point[i].x,M->LB2.point[i].y);//ocit->getX();
+//			y_temp=Lokalna_u_globalnu_y(RB.y, RB.th,M->LB2.point[i].x,M->LB2.point[i].y);//ocit->getY();
+
+			file_op << x_temp<<" "<<y_temp<<"\n";
+		}
+	file_op.close();
+	ofstream file_op2(podaci2.c_str());
+	if( !file_op2.is_open() )
+	{
+		cout << "Ne mogu otvoriti datoteku\n";
+		return;
+	}       
+		for(int i=0;i<M->LB.scan_count;i++){
+			//x_temp=(LB.LB_pose[i]).x;
+			//y_temp=(LB.LB_pose[i]).y;
+			x_temp=M->LB.point[i].x;
+			y_temp=M->LB.point[i].y;
+//			x_temp=Lokalna_u_globalnu_x(RB.x, RB.th,M->LB.point[i].x,M->LB.point[i].y);//ocit->getX();
+//			y_temp=Lokalna_u_globalnu_y(RB.y, RB.th,M->LB.point[i].x,M->LB.point[i].y);//ocit->getY();
+
+			file_op2 << x_temp<<" "<<y_temp<<"\n";
+		}
+	file_op2.close();
+	
+	ofstream file_op1(poz1.c_str());
+	if( !file_op1.is_open() )
+	{
+		cout << "Ne mogu otvoriti datoteku\n";
+		return;
+	}
+	file_op1 << RB.x << " "<<RB.y<<" "<<RB.th<<"\n";
+	file_op1.close();
+
+	ofstream file_op3(podaci3.c_str());
+	if( !file_op3.is_open() )
+	{
+		cout << "Ne mogu otvoriti datoteku\n";
+		return;
+	}  
+	//D* path
+	R_point *temp_point; int temp_length;
+      temp_length=PL->GetPathLength();
+      temp_point=PL->GetPath();
+
+		for(int i=0;i<temp_length;i++){             //<=!!!!!!!!!!!!!!!
+			x_temp=temp_point[i].x;
+			y_temp=temp_point[i].y;
+			th_temp=temp_point[i].th;
+
+			file_op3 << x_temp<<" "<<y_temp<<" "<<th_temp<<"\n";
+		}
+	file_op3.close();
+
+}
 
 
 void WorkHorse::Logger(){

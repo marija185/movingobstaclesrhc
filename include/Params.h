@@ -68,7 +68,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //inverted laser on husky
 #define LASER_INVERTED 0
 //filtering laser border reading outside of angle set plus minus in degrees (112 used for husky because of laptop behind)
-#define LASER_MIN_MAX_ANGLE 135
+#define LASER_MIN_MAX_ANGLE 112
 
 //width of the robot (acc. y axis)
 #define ROBOT_MASK (ceil(RR/CELL_DIM))
@@ -127,10 +127,10 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //GABARITI ROBOTA
 //is the robot rectangular shape (1 yes, 0 circular)
 #define RECTANGULAR	0 
-#define RR			256.//301.406//260.//560.//356.//paper 156//expbig 456.
+#define RR			356.//301.406//260.//560.//356.//paper 156//expbig 456.
 #define RRY			550.//498.//543.405//840.//598.//paper 798//expbig 698.
 #define GOAL_POSITION_TOLERANCE (1*CELL_DIM/2.*sqrt(2.))
-#define THETA_TOLERANCE (10*M_PI/180.)
+#define THETA_TOLERANCE (5*M_PI/180.)
 //reading from the world line file (wld) or from map (png)
 #define READWLD 0
 //reading from the map topic (png) or parameters

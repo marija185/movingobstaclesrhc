@@ -987,8 +987,8 @@ if (prviput==1){
       
       
 //for the first negative
-			GM->mapper_point_temp.x=loop_close_points[0].x;
-			GM->mapper_point_temp.y=loop_close_points[0].y;
+			GM->mapper_point_temp.x=loop_close_points[0].x*1000;
+			GM->mapper_point_temp.y=loop_close_points[0].y*1000;
 
 			if (GM->check_point(GM->mapper_point_temp))
 			{
@@ -998,14 +998,12 @@ if (prviput==1){
 			printf("izvan mape sick (%f,%f)\n",GM->mapper_point_temp.x, GM->mapper_point_temp.y);
 
 			}
-
-
-			  negative_cell[0].x=GM->cell_point_temp.x;
-			  negative_cell[0].y=GM->cell_point_temp.y;
+			negative_cell.clear();
+			  negative_cell.push_back(GM->cell_point_temp);
 
 //for the second negative
-			GM->mapper_point_temp.x=loop_close_points[temp_sl/2].x;
-			GM->mapper_point_temp.y=loop_close_points[temp_sl/2].y;
+			GM->mapper_point_temp.x=loop_close_points[temp_sl/2].x*1000;
+			GM->mapper_point_temp.y=loop_close_points[temp_sl/2].y*1000;
 
 			if (GM->check_point(GM->mapper_point_temp))
 			{
@@ -1016,9 +1014,10 @@ if (prviput==1){
 
 			}
 
+			  negative_cell.push_back(GM->cell_point_temp);
 
-		  negative_cell[1].x=GM->cell_point_temp.x;
-		  negative_cell[1].y=GM->cell_point_temp.y;
+//		  negative_cell[1].x=GM->cell_point_temp.x;
+//		  negative_cell[1].y=GM->cell_point_temp.y;
 
 	//service call
 
@@ -1032,14 +1031,14 @@ if (prviput==1){
 
 //skalirati trace matrice
 
-	map[negative_cell[0].x][negative_cell[0].y].traversal_cost=cost1;
-	map[negative_cell[1].x][negative_cell[1].y].traversal_cost=cost2;
+	map[negative_cell[0].x][negative_cell[0].y].traversal_cost=-50;
+	map[negative_cell[1].x][negative_cell[1].y].traversal_cost=int(cost2/cost1*(-50));
 }
 }
 //if (negative_cell.x!=-1)
 //  map[negative_cell.x][negative_cell.y].traversal_cost=-100;
 
-if (loop_close_points.size()>1){
+if (negative_cell.size()>1) { //loop_close_points.size()>1){
       
 if ((Start - negative_cell[0]==3) && blacklist.size()>0 ){
 

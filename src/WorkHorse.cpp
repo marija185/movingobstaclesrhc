@@ -1704,6 +1704,7 @@ void WorkHorse::Logmeasure(int indeks_ocitanja){
 	string podaci2 = "./Nocitanja/podacisick"+IntToString(indeks_ocitanja);
 	string podaci3 = "./Nocitanja/podacitraj"+IntToString(indeks_ocitanja);
 	string poz1="./Nocitanja/pozicija"+IntToString(indeks_ocitanja);
+	string poz2="./Nocitanja/negpozicija"+IntToString(indeks_ocitanja);
 	ofstream file_op(podaci1.c_str());
 	if( !file_op.is_open() )
 	{
@@ -1747,6 +1748,17 @@ void WorkHorse::Logmeasure(int indeks_ocitanja){
 	}
 	file_op1 << RB.x << " "<<RB.y<<" "<<RB.th<<"\n";
 	file_op1.close();
+
+	ofstream file_op7(poz2.c_str());
+	if( !file_op7.is_open() )
+	{
+		cout << "Ne mogu otvoriti datoteku\n";
+		return;
+	}
+	if (DS->negative_cell.size()>1){
+	file_op7 << DS->negative_cell[0].x << " "<<DS->negative_cell[0].y<<" "<<DS->negative_cell[1].x<<" "<<DS->negative_cell[1].y<<"\n";
+	}
+	file_op7.close();
 
 	ofstream file_op3(podaci3.c_str());
 	if( !file_op3.is_open() )

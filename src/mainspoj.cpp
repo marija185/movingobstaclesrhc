@@ -1137,8 +1137,8 @@ maporiginy=map.response.map.info.origin.position.y;
 
     if (maporiginx<-mapwidth+1. || maporiginx>-1.) maporiginx=-mapwidth/2;
     if (maporiginy<-mapheight+1. || maporiginy>-1.) maporiginy=-mapheight/2;
-  maporiginx=0;
-  maporiginy=0;
+//  maporiginx=0;
+//  maporiginy=0;
     ROS_INFO("map originx is %f m", maporiginx);
     ROS_INFO("map originy is %f m", maporiginy);
     

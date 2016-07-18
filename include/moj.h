@@ -312,8 +312,8 @@ double robotX, robotY,robotTH,robotW,robotV;
       //defaults
       base_frame_ = "base_link";
       odom_topic_ = "/odom";
-      scan_topic_ = "/base_scan";
-      cmd_vel_topic_ = "cmd_vel";
+      scan_topic_ = "/lidar/scan";
+      cmd_vel_topic_ = "/husky/cmd_vel";
       sickAngularOffset = 0;//M_PI/2.;
       vy_max = 0.; //non zero for omnidrive
       vx_max = 500.; //1000.; //diff

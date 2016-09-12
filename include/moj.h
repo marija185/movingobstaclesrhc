@@ -41,6 +41,8 @@
 //#include <slam_msgs/NewStateReq.h>
 //#include <slam_msgs/active_slam.h>
 //#include <slam_msgs/NewAugment.h>
+#include <rvl_psulmdemo/SendRobot.h>
+#include <rvl_psulmdemo/ExtCommand.h>
 #include <actionlib_msgs/GoalStatus.h>
 
 using namespace sensor_msgs;
@@ -301,7 +303,7 @@ double robotX, robotY,robotTH,robotW,robotV;
   ros::Subscriber moving_sub;
   ros::Subscriber slam_points;
   ros::ServiceServer service;
-  ros::ServiceClient client,client_augment;
+  ros::ServiceClient client_slam_extcomm,client_augment;
   ros::Subscriber set_goal;
   ros::Publisher goal_status;
 
@@ -362,11 +364,12 @@ double robotX, robotY,robotTH,robotW,robotV;
 	set_goal=nh_.subscribe("/move_base_simple/goal",1,&GenericLaserScanFilterNode::simple_goal,this); 
 	goal_status=nh_.advertise<actionlib_msgs::GoalStatus>("/goal_status",1); 
   moving_sub = nh_.subscribe("movingRobot0", 1, &GenericLaserScanFilterNode::movingRobot0Callback, this);
-  slam_points = nh_.subscribe("/slam/trajectory", 1, &GenericLaserScanFilterNode::slamPose, this);
+  slam_points = nh_.subscribe("/slam/AS_states", 1, &GenericLaserScanFilterNode::slamPose, this);
 	vel_pub=nh_.advertise<geometry_msgs::Twist>(cmd_vel_topic_, 1); //samo cmd_vel /husky/cmd_vel
   moving_pub = nh_.advertise<movingobstaclesrhc::Moving>("movingRobot1",1);
-  service = nh_.advertiseService("request_stop", &GenericLaserScanFilterNode::ReqRobotStop,this);
+  service = nh_.advertiseService("send_robot", &GenericLaserScanFilterNode::ReqRobotStop,this);
   odom_sub = nh_.subscribe(odom_topic_, 10, &GenericLaserScanFilterNode::odomCallback, this); // /odom /brzine_gazebo /encoder za husky hratc
+  client_slam_extcomm = nh_.serviceClient<rvl_psulmdemo::ExtCommand>("ext_command");
 #if 0  
 	odom_sink_sub.subscribe(nh_,"/ais_pose",1); //ais_pose  /robot_pose_ekf/odom /odom_gazebo
 //  client = nh_.serviceClient<slam_msgs::NewStateReq>("new_state");
@@ -401,7 +404,7 @@ double robotX, robotY,robotTH,robotW,robotV;
   void slamPose(const nav_msgs::PathConstPtr& msg);
   void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
   void laserRearCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
-  bool ReqRobotStop(movingobstaclesrhc::ReqRobStop::Request &req, movingobstaclesrhc::ReqRobStop::Response &res);
+  bool ReqRobotStop(rvl_psulmdemo::SendRobot::Request &req, rvl_psulmdemo::SendRobot::Response &res);
   void simple_goal(const geometry_msgs::PoseStamped::ConstPtr& simple_g);
 
 

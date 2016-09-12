@@ -3,8 +3,8 @@
    <node pkg="tf" type="static_transform_publisher" name="base_link_laser" args="0.44 0 0 3.141592 3.141592 0 /base_link /laser 40"/>
    <node pkg="tf" type="static_transform_publisher" name="base_footprint_base_link" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_footprint /base_link 40"/>;
 
-    <arg name="drive_speed" default="0.62" />
-    <arg name="turn_speed" default="0.54" />
+    <arg name="drive_speed" default="1" />
+    <arg name="turn_speed" default="0.8" />
     <arg name="joy_dev" default="/dev/input/js0" />
     <arg name="cmd_topic" default="cmd_vel" />
 
@@ -29,8 +29,6 @@
     
     <node pkg="receive_xsens" type="receive_xsens" name="IMU" output="screen"/>
     <include file="$(find velodyne_pointcloud)/launch/32e_points.launch"/>
-
-  
 </launch>
 
 

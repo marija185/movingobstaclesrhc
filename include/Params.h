@@ -129,8 +129,8 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 #define RECTANGULAR	0 
 #define RR			356.//301.406//260.//560.//356.//paper 156//expbig 456.
 #define RRY			550.//498.//543.405//840.//598.//paper 798//expbig 698.
-#define GOAL_POSITION_TOLERANCE (1*CELL_DIM/2.*sqrt(2.))
-#define THETA_TOLERANCE (5*M_PI/180.)
+#define GOAL_POSITION_TOLERANCE (3.5*CELL_DIM)
+#define THETA_TOLERANCE (15*M_PI/180.)
 //reading from the world line file (wld) or from map (png)
 #define READWLD 0
 //reading from the map topic (png) or parameters

@@ -1198,7 +1198,7 @@ planner_path_run.path_intup=reallociraj_double(planner_path_run.path_intup, (pla
       		DS->PathCost=OBSTACLE;//dodala zbog provjera
 
         printf("WorkHorse::running> The path is not yet calculated! time diff msec: %d \n", vremenska_razlika);
-#if 0 //komentiram nek vozi po dw-u
+#if 1 //komentiram nek vozi po dw-u
         //ramp
 #if (OKO_REFERENCE==1)
 	rbv=v_refdin_current;
@@ -1255,7 +1255,7 @@ planner_path_run.path_intup=reallociraj_double(planner_path_run.path_intup, (pla
 #if RECTANGULAR || 1
 			no_path_counter++;
 			if (no_path_counter==1) GM->reset();
-			if (no_path_counter>20){
+			if (no_path_counter>2){
 			no_path_counter=0;
 //			processState=NO_PATH;
 			processState=HALT;
@@ -1749,17 +1749,19 @@ void WorkHorse::Logmeasure(int indeks_ocitanja){
 	file_op1 << RB.x << " "<<RB.y<<" "<<RB.th<<"\n";
 	file_op1.close();
 
+	if (DS->negative_cell_forlog.size()>0){
 	ofstream file_op7(poz2.c_str());
 	if( !file_op7.is_open() )
 	{
 		cout << "Ne mogu otvoriti datoteku\n";
 		return;
 	}
-	if (DS->negative_cell.size()>1){
-	file_op7 << DS->negative_cell[0].x << " "<<DS->negative_cell[0].y<<" "<<DS->negative_cell[1].x<<" "<<DS->negative_cell[1].y<<"\n";
-	}
-	file_op7.close();
 
+		for(int i=0; i< DS->negative_cell_forlog.size();i++)
+			file_op7 << DS->negative_cell_forlog[i].x << " "<<DS->negative_cell_forlog[i].y<<"\n";
+
+	file_op7.close();
+	}
 	ofstream file_op3(podaci3.c_str());
 	if( !file_op3.is_open() )
 	{

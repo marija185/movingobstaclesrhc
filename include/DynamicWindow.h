@@ -28,7 +28,7 @@
 //s obzirom na maksimalnu brzinu i domet lasera odredjuje se donja granica maksimalnog slobodnog vremena
 #define TMAX   (LASER_RANGE/V_MAX)
 //PARAMETRI KRUZNOG LUKA - broj tocaka koji opisuje kruznu trajektoriju
-#define N_KL		51 //30 51
+#define N_KL		31 //30 51
 //uguravanje w=0 u prozor brzina
 #define UGURAVANJE 1
 //single suma i isti broj tocaka

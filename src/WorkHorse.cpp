@@ -1198,7 +1198,7 @@ planner_path_run.path_intup=reallociraj_double(planner_path_run.path_intup, (pla
       		DS->PathCost=OBSTACLE;//dodala zbog provjera
 
         printf("WorkHorse::running> The path is not yet calculated! time diff msec: %d \n", vremenska_razlika);
-#if 0 //komentiram nek vozi po dw-u
+#if 1 //komentiram nek vozi po dw-u
         //ramp
 #if (OKO_REFERENCE==1)
 	rbv=v_refdin_current;

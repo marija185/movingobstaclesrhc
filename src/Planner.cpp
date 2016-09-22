@@ -769,7 +769,7 @@ if (DS->prviput){//duplic, ne znam zasto je tu to, znam, zbog praznjenja, samo a
 	 			fclose(logfile);
 	 		}
 		}
-//		if (nasao) return 0; //zasto je tu return iako je mozda nasao slobodnu poziciju? zato sto izadje s nopath i racuna ponovo
+		if (nasao) return 0; //zasto je tu return iako je mozda nasao slobodnu poziciju? zato sto izadje s nopath i racuna ponovo
 //		if (nasao==0) return 2; //radi segm fault ako ne uracuna promjene i trazi cvorove od orija
 	}
     }  //od else

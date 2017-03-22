@@ -31,6 +31,7 @@ roslaunch movingobstaclesrhc smaprot18p5amcltestomnidrive.launch
 roslaunch movingobstaclesrhc zavodtest.launch
 roslaunch movingobstaclesrhc clearmaplargeamcltest.launch
 
+connect with gdb debugger for using files in root of the packages (otherwise it searches the files in .ros folder)
 
 run the robot p3dx
 

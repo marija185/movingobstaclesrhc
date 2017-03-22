@@ -33,6 +33,13 @@ double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY_MAX, W
 
 void VisualizationPublisher::visualizationduringmotion(){
 
+      FILE	*logfile;
+      if ( (logfile = fopen("position_updates.txt","w")) == NULL ){
+				 printf("Error! input file couldn't be opened.");
+			}else{
+			   fprintf(logfile,"%f %f %f %d ",M->RB.x,M->RB.y,M->RB.th*RuS, PL->GetPathLength());
+			}
+      
     	R_point *temp_point;
     	int temp_length;
 
@@ -60,11 +67,18 @@ void VisualizationPublisher::visualizationduringmotion(){
     					p.z = 0;
 
     					line_strip.points.push_back(p);
+              if (logfile!=NULL){
+                fprintf(logfile,"%f %f ",temp_point[pathLength].x,temp_point[pathLength].y);
+              }
 				}
 			//publish path			
 			marker_pub.publish(line_strip);
 		
 			}
+			if (logfile!=NULL){
+			  fclose(logfile);
+			}
+			
 			
 			//robot footprint
 			geometry_msgs::Point p; 
@@ -745,7 +759,7 @@ void moj::executeMotion(){
 			  }
 		  }
 #endif
-                 if (((ciklus % 10)==0)&&(voznja==false)){
+                 if (((ciklus % 10)==0)&&(voznja==false||1)){
 			 int dobar,offset;
 			 double x,y,th;
 			 th=0;
@@ -788,7 +802,7 @@ void moj::executeMotion(){
 			 }else{
 
 			 
-			 if ( (goalfile = fopen("koordinate.txt","r+")) == NULL ){
+			 if ( (goalfile = fopen("commands.txt","r+")) == NULL ){
 				 printf("Error! goalfile couldn't be opened.");
 			 }else if(slam_loop){
 				printf("HOCU CITAT A NE SMIJEM, SRANJE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
@@ -806,7 +820,7 @@ void moj::executeMotion(){
 						 offset=ftell(goalfile);
 						 continue;
 					 }
-					 if (1){//s ip
+					 if (0){//s ip
 					 word = strtok (line,">");
 					 if (word != NULL){
 						 fprintf(logfile,"ip adresa %s\n",word);
@@ -816,7 +830,7 @@ void moj::executeMotion(){
 						 offset=ftell(goalfile);
 						 continue;
 					 }
-					 }else{
+					 }else{//bez ip
 						 word = strtok (line," ");
 					 }
 					 dobar=0;
@@ -890,6 +904,7 @@ void moj::executeMotion(){
 						 goal.x=x;
 						 goal.y=y; 
 						 goal.th=th;
+						 gotogoal(goal);
 						if ( (F = fopen("logger//newgoals","a")) == NULL ){
 				 			printf("Error! komb file couldn't be opened.");
 				 		}else{

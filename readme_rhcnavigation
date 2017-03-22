@@ -32,6 +32,10 @@ roslaunch movingobstaclesrhc zavodtest.launch
 roslaunch movingobstaclesrhc clearmaplargeamcltest.launch
 
 connect with gdb debugger for using files in root of the packages (otherwise it searches the files in .ros folder)
+cd rhcnavigation/src/movingobstaclesrhc (commands and position_updates files are there)
+gdb ../../devel/lib/movingobstaclesrhc/spoj
+then type run or r
+
 
 run the robot p3dx
 

@@ -56,6 +56,8 @@ add_library(movingobstaclesrhc src/mainspoj.cpp src/WorkHorse.cpp src/DynamicWin
 add_executable(spoj src/mainspoj.cpp src/WorkHorse.cpp src/DynamicWindow.cpp src/DStar.cpp src/GridMap.cpp src/Planner.cpp)
 #target_link_libraries(spoj ${catkin_LIBRARIES} ${cspacevoroandrea_LIBRARIES})
 
+add_dependencies(spoj movingobstaclesrhc_generate_messages_cpp)
+
 target_link_libraries(spoj movingobstaclesrhc ${catkin_LIBRARIES} ${cspacevoroandrea_LIBRARIES})
 #target_link_libraries(spoj movingobstaclesrhc ${catkin_LIBRARIES})
 

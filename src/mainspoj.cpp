@@ -1016,6 +1016,8 @@ void moj::executeMotion(){
 		  RB.v=DW->SP.setpoint_v;
 		  RB.vy=DW->SP.setpoint_vy;
 		  RB.w=DW->SP.setpoint_w;
+		  printf("My pose is (%f mm, %f mm, %f deg)\n",RB.x,RB.y,RB.th*RuS);
+
 		}
 #endif
 }

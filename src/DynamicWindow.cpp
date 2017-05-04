@@ -354,7 +354,7 @@ void DynamicWindow::Sekvenca_izvodjenja(){
 #endif
 
 	}
-#if (IDEAL_MODEL==0) || 1
+#if (IDEAL_MODEL==0) || 0
 //rhc should stop in the goal cell without this condition (ideally yes)
 			double goal_tolerance=((WH->RB.x-WH->global_goal_workhorse.x)*(WH->RB.x-WH->global_goal_workhorse.x)+(WH->RB.y-WH->global_goal_workhorse.y)*(WH->RB.y-WH->global_goal_workhorse.y));
       double plength = (PL->GetPathLength()-1)*CELL_DIM;
@@ -7624,6 +7624,7 @@ void DynamicWindow::Path_minimum(){
 		}else{
 //delta J for exitcontrol
 #if (EXITCONTROL)
+
     double deltaJ=0.;
     if ((flag_kl_old) && (cost_old-ljapunov<deltaJ)){
       ni=-1;nj=-1;nk=-1;

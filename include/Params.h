@@ -75,7 +75,7 @@ extern double V_MAX, DV_MAX, V_MIN, VY_MAX, VX_MAX, VX_MIN, VY_MIN, DVX_MAX, DVY
 //length of the robot (acc. x axis)
 #define ROBOT_MASKY (ceil(RRY/CELL_DIM))
 //using higher costs around obstacles
-#define COST_MASK 3//8//4//2 //(ROBOT_MASKY-ROBOT_MASK)
+#define COST_MASK 0//8//4//2 //(ROBOT_MASKY-ROBOT_MASK)
 //#define COST_MASK (ROBOT_MASKY-ROBOT_MASK+2)
 //#define COST_MASK (ROBOT_MASK+2)
 //podebljavam taj jedan cost_mask da ne bude 2 nego 3 (EMPTY+COST_MASK+DEBEL), stavi u 0 kad ne zelis koristiti

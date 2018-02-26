@@ -314,10 +314,10 @@ double robotX, robotY,robotTH,robotW,robotV;
       cmd_vel_topic_ = "cmd_vel";
       sickAngularOffset = 0;//M_PI/2.;
       vy_max = 0.; //non zero for omnidrive
-      vx_max = 500.; //1000.; //diff
+      vx_max = 300.; //1000.; //diff
       vx_min = 0.; //no reverse
       vy_min = 0.;
-      dvx_max = 500; //600.; //acc
+      dvx_max = 300; //600.; //acc
       dvy_max = 0.; //omnidrive
       w_max = 50.; //100.;
       w_min	= -50.; //-100.;

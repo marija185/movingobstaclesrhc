@@ -118,7 +118,7 @@ void DynamicWindow::Sekvenca_izvodjenja(){
 #endif
 	      //TimeLog(1);
 	     //ako je putanja omogucena s obzirom na prohodnost onda se racuna poklapanje s efektivnom putanjom
-#if (STARASUMA==1)
+#if (STARASUMA==1) //&& (KRUZNI_LUK==1) //promijenila
 #if OMNIDRIVE
 				if((TB.flag[ni][nj][nk]==CLEAR)||(TB.flag[ni][nj][nk]==HAS_OBSTACLE)){
 					if(broj_DStar_celija>0){ 
@@ -188,7 +188,7 @@ void DynamicWindow::Sekvenca_izvodjenja(){
 		} // po svim w
 	}   //po svim v
 	} // for all vy
-#if (STARASUMA==1)
+#if (STARASUMA==1) //&& (KRUZNI_LUK==1) //promijenila
 	DoprinosProhodnost();
   //TimeLog(1);
 	if(broj_DStar_celija>0){
@@ -209,7 +209,7 @@ void DynamicWindow::Sekvenca_izvodjenja(){
 // 		printf("DW:Sekvenca_izvodjenja> krivi smjer okretanja prije trazenja optimalnog para, kut=%f, RB.th=%f, ef_th=%f\n",kut*RuS, RB.th*RuS, path_orientation*RuS);
 // 		krivi=true;
 	}
-#if (STARASUMA==1)
+#if (STARASUMA==1) //&& (KRUZNI_LUK==1)
 	Optimalni_par(kut);
 #else
 	Path_minimum();//ovdje pregleda sve CLEAR
@@ -238,7 +238,7 @@ void DynamicWindow::Sekvenca_izvodjenja(){
 			SP.setpoint_y=KL.y[1];
 			SP.setpoint_th=KL.th[1];
 //			best_old=false;
-#if (STARASUMA==1)
+#if (STARASUMA==1) && (KRUZNI_LUK==1)
 	//ograniciti okretanje (optimalni par zadaje 1/2 maksimalne, tu cemo ju korigirati)
 			if ((naStartu)&&(fabs(SP.setpoint_w)>W_MAX/4)) {
 					if (SP.setpoint_w>0) SP.setpoint_w=W_MAX/4;
@@ -3305,7 +3305,7 @@ void DynamicWindow::Kruzni_luk_sa_zaustavljanjem(){
 	T_kraj=std::min(T_kraj,(N_KL-3-delaydt+1));//omogucava plus uvijek, znaci da plus postaje mozda cak i minus2
 	T_kraj=std::max(T_kraj,(N+3));//ovo znaci da minus2 postaje mozda cak i plus, a ovi dolje ionako ne bi postojali
 //	T_kraj=N_KL-3;//tu pazi! zakomentiraj kada zelis setajuci horizont
-	if ((fabs(v0)<V_TOLERANCE)&& (fabs(vy0)<V_TOLERANCE) && (fabs(w0)<W_TOLERANCE)) printf("T_end=%d, best_old=%d, T_old=%d\n", T_kraj,best_old, T_old);
+	if (1||(fabs(v0)<V_TOLERANCE)&& (fabs(vy0)<V_TOLERANCE) && (fabs(w0)<W_TOLERANCE)) printf("T_end=%d, best_old=%d, T_old=%d\n", T_kraj,best_old, T_old);
 //this is for different orientational velocity profile
 	upsideVforvy=0;
 	upsideVforv=0;
@@ -5523,7 +5523,7 @@ void DynamicWindow::LogMisc(int state)
 			KL_old_temp=KL;//spremanje stare optimalne trajektorije
 #if (IDEAL_MODEL==1)
 			double tempS;
-#if 1			
+#if (STARASUMA==0)		
 			printf("provjera spremanja pomocne stare trajektorije\n");
 				for(i=0;i<N_KL;i++){
 				  tempS=computeInterpolatedCost(KL_old_temp.x[i],KL_old_temp.y[i],KL_old_temp.th[i]);
@@ -6337,7 +6337,11 @@ double DynamicWindow::PathAlignment()
 	   }
 //    path_alignment+=TB.v[ni]*0.1*STEP*10.;//pomak od brzine u jednom koraku u cm
 #endif
+#if (STARASUMA==1)
+   return (path_alignment);
+#else
    return (path_alignment+rho*sumvel);
+#endif
 }
 
 double DynamicWindow::Old_traj(){
@@ -6367,6 +6371,7 @@ double DynamicWindow::Old_traj(){
 			KL_old.vy[i]=KL_old_temp.vy[i+1];
 			KL_old.w[i]=KL_old_temp.w[i+1];
 			KL_old.S[i]=KL_old_temp.S[i+1];
+#if (STARASUMA==0)
 			if (KL_old.S[i]!=computeInterpolatedCost(KL_old.x[i],KL_old.y[i],KL_old.th[i])){
 			  printf("provjera prijepisa stare trajektorije: cijene nisu jednake! KL_old.S[i]=%.15f vs compute=%.15f, i=%d rotateongoal=%d,KL_old.x[i]=%.15f, KL_old.y[i]=%.15f, KL_old.th[i]=%.15f\n",KL_old.S[i],computeInterpolatedCost(KL_old.x[i],KL_old.y[i],KL_old.th[i]),i,rotateongoal,KL_old.x[i], KL_old.y[i], KL_old.th[i]);
 			  if (rotateongoal){
@@ -6384,6 +6389,7 @@ double DynamicWindow::Old_traj(){
 			  break;
 			  }
 			}
+#endif
 //			if (i==0)
 //				printf("provjera: KL_old x,y,th,v,w,S = %f,%f,%f,%f,%f,%f\n",KL_old.x[0],KL_old.y[0],KL_old.th[0],KL_old.v[0],KL_old.w[0],KL_old.S[0]);
 

@@ -23,6 +23,8 @@
 #include <cspacevoronoi.h>
 #endif
 
+
+
 extern DStar       *DS;
 extern DynamicWindow       *DW;
 extern GridMap       *GM;
@@ -507,7 +509,7 @@ if (DS->prviput){//duplic, ne znam zasto je tu to, znam, zbog praznjenja, samo a
 		int nasao=0;
 		bool find_first=true;
 		I_point candidate;
-		if ((abs(global_goal_i.x-start_i.x)<8) && (abs(global_goal_i.y-start_i.y)<8)){
+		if ((abs(global_goal_i.x-start_i.x)<4) && (abs(global_goal_i.y-start_i.y)<4)){
 		  nasao=1;
 		  global_goal_i=start_i;
 		  printf("start and goal are close - choosing goal to be start\n");
@@ -550,7 +552,7 @@ if (DS->prviput){//duplic, ne znam zasto je tu to, znam, zbog praznjenja, samo a
 //  if (DS->prviput==0) oricost=DS->PathCostOri(temp_i);
 	if (((DS->IsValidOri(temp_i))==1) && (DS->howmanyOriCollides(temp_i)==0) && (oricost<OBSTACLE)) 
 #else
-			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW) && (DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
+			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW || DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
 #endif
 			{
 				global_goal_i=temp_i;
@@ -581,7 +583,7 @@ if (DS->prviput){//duplic, ne znam zasto je tu to, znam, zbog praznjenja, samo a
 #if DSTAR3D
 	if (((DS->IsValidOri(temp_i))==1) && (DS->howmanyOriCollides(temp_i)==0)&& (oricost<OBSTACLE)) 
 #else
-			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW) && (DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
+			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW || DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
 #endif
 			{
 				  global_goal_i=temp_i;
@@ -613,7 +615,7 @@ if (DS->prviput){//duplic, ne znam zasto je tu to, znam, zbog praznjenja, samo a
 //  if (DS->prviput==0) oricost=DS->PathCostOri(temp_i);
 	if (((DS->IsValidOri(temp_i))==1) && (DS->howmanyOriCollides(temp_i)==0)&& (oricost<OBSTACLE)) 
 #else
-			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW) && (DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
+			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW || DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
 #endif
 			{
   				global_goal_i=temp_i;
@@ -646,7 +648,7 @@ if (DS->prviput){//duplic, ne znam zasto je tu to, znam, zbog praznjenja, samo a
 //  if (DS->prviput==0) oricost=DS->PathCostOri(temp_i);
 	if (((DS->IsValidOri(temp_i))==1) && (DS->howmanyOriCollides(temp_i)==0)&& (oricost<OBSTACLE)) 
 #else
-			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW) && (DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
+			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW || DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
 #endif
 			{
   				global_goal_i=temp_i;
@@ -679,7 +681,7 @@ if (DS->prviput){//duplic, ne znam zasto je tu to, znam, zbog praznjenja, samo a
 //  if (DS->prviput==0) oricost=DS->PathCostOri(temp_i);
 	if (((DS->IsValidOri(temp_i))==1) && (DS->howmanyOriCollides(temp_i)==0)&& (oricost<OBSTACLE)) 
 #else
-			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW) && (DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
+			if ((DS->IsValid(temp_i.x, temp_i.y)==1) && (DS->map[temp_i.x][temp_i.y].tag!=NEW || DS->map[temp_i.x][temp_i.y].traversal_cost==EMPTYC))
 #endif
 			{
   				global_goal_i=temp_i;

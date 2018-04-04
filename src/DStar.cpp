@@ -1504,7 +1504,7 @@ void DStar::processState() {
 	// RAISE STANJE
 	if (k_val < h_val)//tu najbolji nije prepreka
 	{
-		printf("raise\n");
+//		printf("raise\n");
 #ifdef DSTAR_EIGHT_CONNECTED 
 		for ( int d = 0; d < 8; d++ ) //for all neighbors
 #else
@@ -1576,8 +1576,8 @@ void DStar::processState() {
 	if ( ((map[point.x][point.y].tag==NEW)&&(0||c<OBSTACLE)&&(0||h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next.x == MinCostElemLista.x) && (map[point.x][point.y]._next.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && (1||(h_point<OBSTACLE)||(h_val<OBSTACLE)) && (1||(h_point<OBSTACLE)||(c<OBSTACLE))) || ( ((map[point.x][point.y]._next.x != MinCostElemLista.x) || (map[point.x][point.y]._next.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE))) )
 		{
 			if ((h_val>OBSTACLE)&&(k_val>OBSTACLE)){
-				printf("fat LOWER h_val=%d k_val=%d c*travCost[%d]=%d\n",h_val,k_val,d,c*travCost[d]);
-				pipodjednom=true;
+//				printf("fat LOWER h_val=%d k_val=%d c*travCost[%d]=%d\n",h_val,k_val,d,c*travCost[d]);
+//				pipodjednom=true;
 			}
 
 			map[point.x][point.y]._next.x = MinCostElemLista.x;
@@ -1591,8 +1591,8 @@ void DStar::processState() {
   {//tu N moze bit prepreka ako je P NEW ili P->N s razlicitim hovima
 		//printf("opet raise");
 	  if (k_val>h_val){
-		  printf("exists k>h\n");
-		  pipodjednom=true;
+//		  printf("exists k>h\n");
+//		  pipodjednom=true;
 	  }
 #ifdef DSTAR_EIGHT_CONNECTED 
 		for ( int d = 0; d < 8; d++ ) //for all neighbors
@@ -1626,7 +1626,7 @@ void DStar::processState() {
 			map[point.x][point.y]._next.x = MinCostElemLista.x;
 					map[point.x][point.y]._next.y = MinCostElemLista.y;
 					insertNode(point, h_val + c*travCost[d]);
-					printf("opet raise obradjen\n");
+//					printf("opet raise obradjen\n");
 		}
 		else
         {
@@ -1634,7 +1634,7 @@ void DStar::processState() {
 		 {
 
 			 insertNode(MinCostElemLista, h_val);
-	    printf("opet raise obradjen\n");
+//	    printf("opet raise obradjen\n");
 		 }
 		else
         {
@@ -1643,7 +1643,7 @@ void DStar::processState() {
               {
 
 		      insertNode(point, h_point);
-          printf("opet raise obradjen\n");
+//          printf("opet raise obradjen\n");
 	      }
           }
 			  } //else
@@ -1747,7 +1747,7 @@ void DStar::processStateOri() {
 	if ( ((map[point.x][point.y].tagOri[point.th]==NEW)&&(c<OBSTACLE)&&(h_val<OBSTACLE)) || ( ((map[point.x][point.y]._nextOri[point.th].x == MinCostElemLista.x) && (map[point.x][point.y]._nextOri[point.th].y == MinCostElemLista.y) && (map[point.x][point.y]._nextOri[point.th].th == MinCostElemLista.th)) && (h_point != h_val + c*travCostOri[d]) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && ((h_point<OBSTACLE)||(c<OBSTACLE))) || ( ((map[point.x][point.y]._nextOri[point.th].x != MinCostElemLista.x) || (map[point.x][point.y]._nextOri[point.th].y != MinCostElemLista.y) || (map[point.x][point.y]._nextOri[point.th].th != MinCostElemLista.th)) && (h_point > h_val + c*travCostOri[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE))) )
 		{
 			if ((h_val>OBSTACLE)&&(k_val>OBSTACLE)){
-				printf("fat LOWER\n");
+//				printf("fat LOWER\n");
 			}
 
 			map[point.x][point.y]._nextOri[point.th] = MinCostElemLista;
@@ -1760,7 +1760,7 @@ void DStar::processStateOri() {
   {//tu N moze bit prepreka ako je P NEW ili P->N s razlicitim hovima
 		//printf("opet raise");
 	  if (k_val>h_val){
-		  printf("exists k>h\n");
+//		  printf("exists k>h\n");
 	  }
 #ifdef DSTAR_EIGHT_CONNECTED
 		for ( int d = 0; d < 10; d++ ) //for all neighbors
@@ -1887,7 +1887,7 @@ void DStar::processStateReverse() {
 				if ( ((map[point.x][point.y].tag_reverse==NEW)&&(c<OBSTACLE)&&(h_val<OBSTACLE)) || ( ((map[point.x][point.y]._next_reverse.x == MinCostElemLista.x) && (map[point.x][point.y]._next_reverse.y == MinCostElemLista.y)) && (h_point != h_val + c*travCost[d]) && ((h_point<OBSTACLE)||(h_val<OBSTACLE)) && ((h_point<OBSTACLE)||(c<OBSTACLE))) || ( ((map[point.x][point.y]._next_reverse.x != MinCostElemLista.x) || (map[point.x][point.y]._next_reverse.y != MinCostElemLista.y)) && (h_point > h_val + c*travCost[d]) && (c<OBSTACLE) && ((h_point<OBSTACLE)||(h_val<OBSTACLE))) )
 				{
 					if ((h_val>OBSTACLE)&&(k_val>OBSTACLE)){
-						printf("fat LOWER\n");
+//						printf("fat LOWER\n");
 					}
 			
 					map[point.x][point.y]._next_reverse.x = MinCostElemLista.x;
@@ -1901,7 +1901,7 @@ void DStar::processStateReverse() {
 	{//tu N moze bit prepreka ako je P NEW ili P->N s razlicitim hovima
 		//printf("opet raise");
 		if (k_val>h_val){
-			printf("reverse: exists k>h\n");
+//			printf("reverse: exists k>h\n");
 		}
 		for ( int d = 0; d < 8; d++ )
 		{
@@ -1971,8 +1971,8 @@ void    DStar::insertNode( I_point element, int h_new )
   }
   map[element.x][element.y].h_cost_int = h_new;
   if ((map[element.x][element.y].k_cost_int>OBSTACLE)&&(h_new>OBSTACLE)){
-	  printf("fat both (%d,%d)\n",element.x,element.y);
-	  pipodjednom=true;
+//	  printf("fat both (%d,%d)\n",element.x,element.y);
+//	  pipodjednom=true;
   }
   map[element.x][element.y].time_stamp = time_stamp_counter;
 #if DSTAR_REVERSE
@@ -2057,7 +2057,7 @@ void    DStar::insertNodeOri( I_point element, int h_new )
   }
   map[element.x][element.y].h_cost_intOri[element.th] = h_new;
   if ((map[element.x][element.y].k_cost_intOri[element.th]>OBSTACLE)&&(h_new>OBSTACLE)){
-	  printf("fat both (%d,%d)\n",element.x,element.y);
+//	  printf("fat both (%d,%d)\n",element.x,element.y);
   }
   map[element.x][element.y].tagOri[element.th] = OPEN;
 

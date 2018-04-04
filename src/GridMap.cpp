@@ -98,7 +98,7 @@ void GridMap::reset()
 		printf("GM: reset()\n");
 		//globalni counter preko kojeg se moze racunati time_stamp
 		counter=0;counter_moving=-3;//-1 i -2 i -3 su rezervirani za mjesta sudara s pokretnim preprekama, prvi dekrement ce ga postaviti u -4
-		numnewmovings=0; numnewstatic=0;numnewmovingcells=0;numoldmovings = 0;pocetak=0;numnewcg=0;numoldcg=0;num_col_points_old=0;num_col_points=0;  numindeksimapepraznjenje=0; numindeksimapepunjenje=0;numindeksizanepunjenje=0;
+		numnewmovings=0; numnewstatic=0;numnewmovingcells=0;numoldmovings = 0;pocetak=0;numnewcg=0;numoldcg=0;num_col_points_old=0;num_col_points=0;  numindeksimapepraznjenje=0; numindeksimapepunjenje=0;numindeksizanepunjenje=0;brojnovih=0;
 		nonempty=1;
 }
 

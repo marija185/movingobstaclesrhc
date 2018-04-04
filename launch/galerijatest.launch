@@ -16,7 +16,7 @@
 
 <include file="$(find movingobstaclesrhc)/launch/fake_corridor.launch" />
 
-<!-- running the navigation -->
+<!-- running the navigation 
     <node name="spoj" pkg="movingobstaclesrhc" type="spoj">
         <param name="base_frame" value="base_link" />
         <param name="odom_topic" value="/odom" />
@@ -32,7 +32,7 @@
     </node>
     
 
-
+-->
 
 
 <node name="rviz" pkg="rviz" type="rviz" args="-d $(find movingobstaclesrhc)/dodichsim.rviz" /> 

@@ -1,0 +1,18 @@
+<launch>
+
+<!-- Select the robot-driver you wish to use 
+<include file="$(find movingobstaclesrhc)/launch/rosaria.launch" />-->
+
+	<!-- laser -->
+	<node name="sicktoolbox_wrapper" pkg="sicktoolbox_wrapper" type="sicklms">
+		<param name="port" value="/dev/ttyUSB0"/>	
+		<param name="resolution" value="1"/>
+		<param name="connect_delay" value="30"/>
+	</node>
+
+<!-- 
+<node pkg="tf" type="static_transform_publisher" name="base_link_laser" args="0.0 0 0.6 0.0 0 0 Pioneer3DX/base_link /laser 40"/>-->
+	 
+</launch>
+
+

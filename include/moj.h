@@ -83,6 +83,7 @@ public:
   VisualizationPublisher(ros::NodeHandle n) :
       nh_(n),  fixed_frame_("map") //map kad koristis stage, odom u gazebu simulacija, minefield gazebo kasnija simulacija
   {
+      nh_.getParam("/spoj/world_frame", fixed_frame_);
 
 #if (ROBOT>=1)
 	marker_pub=nh_.advertise<visualization_msgs::Marker>("/visualization_marker",10);
@@ -249,6 +250,7 @@ protected:
 
 //read from params
   std::string base_frame_;
+  std::string world_frame_;
   std::string odom_topic_;
   std::string scan_topic_;
   std::string cmd_vel_topic_;
@@ -309,6 +311,7 @@ double robotX, robotY,robotTH,robotW,robotV;
       nh_=(n);
       //defaults
       base_frame_ = "base_link";
+      world_frame_="map";
       odom_topic_ = "/odom";
       scan_topic_ = "/base_scan";
       cmd_vel_topic_ = "cmd_vel";
@@ -324,6 +327,7 @@ double robotX, robotY,robotTH,robotW,robotV;
       dw_max = 70.; //100.;
 
       nh_.getParam("/spoj/base_frame", base_frame_);
+      nh_.getParam("/spoj/world_frame", world_frame_);
       nh_.getParam("/spoj/odom_topic", odom_topic_);
       nh_.getParam("/spoj/scan_topic", scan_topic_);
       nh_.getParam("/spoj/cmd_vel_topic", cmd_vel_topic_);
@@ -381,10 +385,10 @@ double robotX, robotY,robotTH,robotW,robotV;
     filter_laser_front = new tf::MessageFilter<sensor_msgs::LaserScan>(sub_laser_front, tf_listener, "minefield", 10);
     filter_laser_front->registerCallback( boost::bind(&GenericLaserScanFilterNode::laserCallback, this, _1));
 #else
-    filter_laser_front = new tf::MessageFilter<sensor_msgs::LaserScan>(sub_laser_front, tf_listener, "/map", 10);
+    filter_laser_front = new tf::MessageFilter<sensor_msgs::LaserScan>(sub_laser_front, tf_listener, world_frame_, 10);
     filter_laser_front->registerCallback( boost::bind(&GenericLaserScanFilterNode::laserCallback, this, _1));
 #if (1)
-    filter_laser_rear = new tf::MessageFilter<sensor_msgs::LaserScan>(sub_laser_rear, tf_listener, "/map", 100);
+    filter_laser_rear = new tf::MessageFilter<sensor_msgs::LaserScan>(sub_laser_rear, tf_listener, world_frame_, 100);
     filter_laser_rear->registerCallback( boost::bind(&GenericLaserScanFilterNode::laserRearCallback, this, _1));
 #endif
 #endif

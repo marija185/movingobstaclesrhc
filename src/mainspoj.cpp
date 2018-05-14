@@ -483,8 +483,8 @@ void GenericLaserScanFilterNode::movingRobot0Callback(const movingobstaclesrhc::
 
   void GenericLaserScanFilterNode::laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg){
    tf::StampedTransform transform;
-   tf_listener.waitForTransform("map",msg->header.frame_id, msg->header.stamp, ros::Duration(0.05));
-   tf_listener.lookupTransform("map", msg->header.frame_id, msg->header.stamp, transform);
+   tf_listener.waitForTransform(world_frame_,msg->header.frame_id, msg->header.stamp, ros::Duration(0.05));
+   tf_listener.lookupTransform(world_frame_, msg->header.frame_id, msg->header.stamp, transform);
  
           double yaw, pitch, roll, tfx, tfy;
           transform.getBasis().getRPY(roll, pitch, yaw);
@@ -525,7 +525,7 @@ void GenericLaserScanFilterNode::movingRobot0Callback(const movingobstaclesrhc::
   // Callback
   void GenericLaserScanFilterNode::laserRearCallback(const sensor_msgs::LaserScan::ConstPtr& msg){
    tf::StampedTransform transform;
-   tf_listener.lookupTransform("/map", msg->header.frame_id, msg->header.stamp, transform);
+   tf_listener.lookupTransform(world_frame_, msg->header.frame_id, msg->header.stamp, transform);
  
           double yaw, pitch, roll, tfx, tfy;
           transform.getBasis().getRPY(roll, pitch, yaw);
@@ -626,8 +626,8 @@ void moj::executeMotion(){
 #if (ROBOT>=1)
 //        tf_listener.waitForTransform("map", "Pioneer3AT/base_link",ros::Time(0), ros::Duration(1.0));//robot_0/now
 //        tf_listener.lookupTransform("map", "Pioneer3AT/base_link", ros::Time(0), transform);//robot_0/
-        tf_listener.waitForTransform("map", base_frame_,ros::Time(0), ros::Duration(1.0));//robot_0/now
-        tf_listener.lookupTransform("map", base_frame_, ros::Time(0), transform);//robot_0/
+        tf_listener.waitForTransform(world_frame_, base_frame_,ros::Time(0), ros::Duration(1.0));//robot_0/now
+        tf_listener.lookupTransform(world_frame_, base_frame_, ros::Time(0), transform);//robot_0/
 #else
         tf_listener.waitForTransform("map", "/robot_0/base_link",ros::Time(0), ros::Duration(1.0));//robot_0/now
         tf_listener.lookupTransform("map", "/robot_0/base_link", ros::Time(0), transform);//robot_0/
@@ -635,7 +635,7 @@ void moj::executeMotion(){
       }else{
 #if (ROBOT>=1)
 //        tf_listener.lookupTransform("map", "Pioneer3AT/base_link", ros::Time(0), transform);robot_0/
-        tf_listener.lookupTransform("map", base_frame_, ros::Time(0), transform);//robot_0/
+        tf_listener.lookupTransform(world_frame_, base_frame_, ros::Time(0), transform);//robot_0/
         if ((transform.stamp_-laser1stamp).toSec()>0.1 && (transform.stamp_-laser2stamp).toSec()>0.1){
           printf("AaaAAAaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!\n");
 //        std::cerr<<(transform.stamp_-laser1stamp).toSec()<<std::endl;
@@ -1217,7 +1217,7 @@ if ((F = fopen("gridmapaMap.dat","wt")) != NULL)
 	footprinty[2]=width*CELL_DIM/2.;
 	footprinty[3]=footprinty[2];
 
-#if (RECTANGULAR==0) && 1
+#if (RECTANGULAR==0) && 0
 ////pioneer2dx
 	 for (int i=7; i<15; i++){
 	    if (i<8){

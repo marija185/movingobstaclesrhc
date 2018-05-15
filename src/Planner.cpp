@@ -2,7 +2,7 @@
                           Planner.cpp  -  description
                              -------------------
     begin                : Wed Jun 18 2003
-    copyright            : (C) 2003 by 
+    copyright            : (C) 2003 by Kristijan Macek, 2004 by Marija Seder 
     email                : 
  ***************************************************************************/
 

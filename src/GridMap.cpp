@@ -2,7 +2,7 @@
                           GridMap.cpp  -  description
                              -------------------
     begin                : Tue Jun 17 2003
-    copyright            : (C) 2003 by 
+    copyright            : (C) 2003 by Kristijan Macek, 2004 by Marija Seder
     email                : 
  ***************************************************************************/
 
